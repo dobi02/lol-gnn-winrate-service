@@ -66,7 +66,7 @@ def version_data(file_path: str):
         run_command(["git", "commit", "-m", commit_message])
         
         # 5. Git 원격 저장소로 푸시
-        run_command(["git", "push", "origin", "data-lastest"])
+        run_command(["git", "push"])
         
         print("Data versioned successfully.")
     except subprocess.CalledProcessError as e:
