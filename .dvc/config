@@ -1,0 +1,4 @@
+[core]
+    remote = onprem_storage
+['remote "onprem_storage"']
+    url = ssh://onprem-dvc-server/home/dvcuser/dvc-storage
