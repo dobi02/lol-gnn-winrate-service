@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7898255742",
+        "participants": [
+            "8KYgyeZlAwMUQjpG06NwuywjQnqrv7IQTCwm_F_pM0Buse1--4OJyjC3GH5QxCQZvhsBdjQcZanxtA",
+            "TJFhNqNX3KHXKK4JRAK_cVqMPOR_XvKugFGvrBCIuBs5GCEEowWDK9N57wbCC7JPsWanvaYX5Br3-Q",
+            "Og5IMmgsvnS-wPZg5zvTfi_bLBZl4fp_rfA1Vqb8YBApc_Cx_EfE48wVVazcVySzTnFK99xbNSiXCA",
+            "wVDI5wFP-L0sRi8v5J5fL-mNEaN6AmwA-pGAS2qHChanTq7PsbJ8djo211VaGSDGQ5LyYNcV9t5PkA",
+            "9KxewMRCVXDOxPzHQiEjrn84KUcNsWKCVwFd0b137W7oX4kZRnV06VkncPL-_AfLZLNDhlqK_BqtwA",
+            "e2qFXKEDTNskgMfmeBR9u5sYYrK1K8iyuJ0WwHfGUQk-atjYhx6QdGyND6-HRWu5a0T4BLflYJVw-Q",
+            "MCUw6iT7PTxDu8S4uabzGmamYbZ8gFrdvbzY9PoYzI3aWT4D2dB5mTNviUgfDBBaQ3FkeuSvrLBPgA",
+            "GlGmJQJpuc1SDUmT6gQeMTQwNkZUnxhRB3BO_K22FPVjLWPcOAitaCk45tZd0c5suW0uLlr-fjb_TQ",
+            "Hclt3B5zMsz-PeUhoFGm1RSKOHsRwai71BEk4AT_3QNuzgTxD45PlMp0Oh738kAxvUWTPZ1dYq9AMA",
+            "eVSMG82n1O_-wyiB-dcC38qX6SGK8Su_cTZl-jNc0O0KCS_POqoFpSvZUlArYgguXR0dNYbWjob5SA"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762250673796,
+        "gameDuration": 949,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "8KYgyeZlAwMUQjpG06NwuywjQnqrv7IQTCwm_F_pM0Buse1--4OJyjC3GH5QxCQZvhsBdjQcZanxtA",
+                "summonerName": "",
+                "championName": "Ornn",
+                "kills": 1,
+                "deaths": 4,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "TJFhNqNX3KHXKK4JRAK_cVqMPOR_XvKugFGvrBCIuBs5GCEEowWDK9N57wbCC7JPsWanvaYX5Br3-Q",
+                "summonerName": "",
+                "championName": "LeeSin",
+                "kills": 4,
+                "deaths": 3,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "Og5IMmgsvnS-wPZg5zvTfi_bLBZl4fp_rfA1Vqb8YBApc_Cx_EfE48wVVazcVySzTnFK99xbNSiXCA",
+                "summonerName": "",
+                "championName": "Zed",
+                "kills": 3,
+                "deaths": 2,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "wVDI5wFP-L0sRi8v5J5fL-mNEaN6AmwA-pGAS2qHChanTq7PsbJ8djo211VaGSDGQ5LyYNcV9t5PkA",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 3,
+                "deaths": 6,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "9KxewMRCVXDOxPzHQiEjrn84KUcNsWKCVwFd0b137W7oX4kZRnV06VkncPL-_AfLZLNDhlqK_BqtwA",
+                "summonerName": "",
+                "championName": "Trundle",
+                "kills": 0,
+                "deaths": 0,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "e2qFXKEDTNskgMfmeBR9u5sYYrK1K8iyuJ0WwHfGUQk-atjYhx6QdGyND6-HRWu5a0T4BLflYJVw-Q",
+                "summonerName": "",
+                "championName": "Gwen",
+                "kills": 3,
+                "deaths": 2,
+                "assists": 1,
+                "win": true
+            },
+            {
+                "puuid": "MCUw6iT7PTxDu8S4uabzGmamYbZ8gFrdvbzY9PoYzI3aWT4D2dB5mTNviUgfDBBaQ3FkeuSvrLBPgA",
+                "summonerName": "",
+                "championName": "Viego",
+                "kills": 2,
+                "deaths": 1,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "GlGmJQJpuc1SDUmT6gQeMTQwNkZUnxhRB3BO_K22FPVjLWPcOAitaCk45tZd0c5suW0uLlr-fjb_TQ",
+                "summonerName": "",
+                "championName": "Vladimir",
+                "kills": 3,
+                "deaths": 3,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "Hclt3B5zMsz-PeUhoFGm1RSKOHsRwai71BEk4AT_3QNuzgTxD45PlMp0Oh738kAxvUWTPZ1dYq9AMA",
+                "summonerName": "",
+                "championName": "Kaisa",
+                "kills": 4,
+                "deaths": 4,
+                "assists": 0,
+                "win": true
+            },
+            {
+                "puuid": "eVSMG82n1O_-wyiB-dcC38qX6SGK8Su_cTZl-jNc0O0KCS_POqoFpSvZUlArYgguXR0dNYbWjob5SA",
+                "summonerName": "",
+                "championName": "Bard",
+                "kills": 3,
+                "deaths": 1,
+                "assists": 6,
+                "win": true
+            }
+        ]
+    }
+}

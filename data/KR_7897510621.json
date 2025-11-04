@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897510621",
+        "participants": [
+            "qHvneKN4EVNp2j_usgT8reaPge_iAu4wB3_xn9UjcCECk3_ffT0cnt5531YwoXa2HsqxjgzU6uTgdg",
+            "ek20YEF0Uh2UljSQocY4d2PXLy9_W9FknP5HZ1wiy3JjSjD3KLocWScGLZOEyvxN8xTurCIYJfCgjA",
+            "aGYkRU86jBCcVoAOw8PI_VWuCLJ6MbuFN_Z5xx9Ga-u7Gf_uPaMk_W4GorJNLjakjPgZsm1u8pooWg",
+            "q6lk3RZ8qvCihcg10aNHYgS_OCf6d6Y9oKjYadnGoEDu21YhyTpRQqRkSSjh6jDa0fqmHITfkQeiWw",
+            "QRqVxEWszIOySLB87Y1DksPWpfiwX9NhST_bVnv2M1vncRAOfffQOgvB0rZUhqa_SSMtfBpC6wjFeQ",
+            "EbDulyXaHyVDWal8AoAJ7eN3uxORBd52pktqP0uSrvZUuH0kYunrcJ5bkCztc38QzLLDFRNE4LC1nw",
+            "YqdEVp57wpYFpC0zskuu4n_YXzFaCvpwsVwS_mYhmQ7xVbCjePkQJUdWKjSZ9X1nJ8elII7rTnahEQ",
+            "pkgppy4itctki6OXNCO72Ji9U5OObVHVFMbsL1ozPy057IwWG-cD3NsVye-3AQZwcksq4WkOJDDubQ",
+            "WX0b0i_YJ4R2oMoQdKqEA4liuGFgHFC_06hyw8zSoLdHcTu6vRl4nolPX30cJ3CU_DPhFuZpHeIQAQ",
+            "giXm0GKjxlSiVn3Lvf02BmUaTIZLapceg3UXY_a82JcuEsAps6uyiAx2h-_I9VrHt_6cPFkqaI04wg"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762180732381,
+        "gameDuration": 1222,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "qHvneKN4EVNp2j_usgT8reaPge_iAu4wB3_xn9UjcCECk3_ffT0cnt5531YwoXa2HsqxjgzU6uTgdg",
+                "summonerName": "",
+                "championName": "Vladimir",
+                "kills": 0,
+                "deaths": 4,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "ek20YEF0Uh2UljSQocY4d2PXLy9_W9FknP5HZ1wiy3JjSjD3KLocWScGLZOEyvxN8xTurCIYJfCgjA",
+                "summonerName": "",
+                "championName": "JarvanIV",
+                "kills": 2,
+                "deaths": 5,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "aGYkRU86jBCcVoAOw8PI_VWuCLJ6MbuFN_Z5xx9Ga-u7Gf_uPaMk_W4GorJNLjakjPgZsm1u8pooWg",
+                "summonerName": "",
+                "championName": "Hwei",
+                "kills": 1,
+                "deaths": 5,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "q6lk3RZ8qvCihcg10aNHYgS_OCf6d6Y9oKjYadnGoEDu21YhyTpRQqRkSSjh6jDa0fqmHITfkQeiWw",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 2,
+                "deaths": 4,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "QRqVxEWszIOySLB87Y1DksPWpfiwX9NhST_bVnv2M1vncRAOfffQOgvB0rZUhqa_SSMtfBpC6wjFeQ",
+                "summonerName": "",
+                "championName": "MonkeyKing",
+                "kills": 1,
+                "deaths": 8,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "EbDulyXaHyVDWal8AoAJ7eN3uxORBd52pktqP0uSrvZUuH0kYunrcJ5bkCztc38QzLLDFRNE4LC1nw",
+                "summonerName": "",
+                "championName": "Rumble",
+                "kills": 4,
+                "deaths": 1,
+                "assists": 1,
+                "win": true
+            },
+            {
+                "puuid": "YqdEVp57wpYFpC0zskuu4n_YXzFaCvpwsVwS_mYhmQ7xVbCjePkQJUdWKjSZ9X1nJ8elII7rTnahEQ",
+                "summonerName": "",
+                "championName": "Lillia",
+                "kills": 10,
+                "deaths": 0,
+                "assists": 8,
+                "win": true
+            },
+            {
+                "puuid": "pkgppy4itctki6OXNCO72Ji9U5OObVHVFMbsL1ozPy057IwWG-cD3NsVye-3AQZwcksq4WkOJDDubQ",
+                "summonerName": "",
+                "championName": "Mel",
+                "kills": 8,
+                "deaths": 3,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "WX0b0i_YJ4R2oMoQdKqEA4liuGFgHFC_06hyw8zSoLdHcTu6vRl4nolPX30cJ3CU_DPhFuZpHeIQAQ",
+                "summonerName": "",
+                "championName": "Caitlyn",
+                "kills": 3,
+                "deaths": 1,
+                "assists": 9,
+                "win": true
+            },
+            {
+                "puuid": "giXm0GKjxlSiVn3Lvf02BmUaTIZLapceg3UXY_a82JcuEsAps6uyiAx2h-_I9VrHt_6cPFkqaI04wg",
+                "summonerName": "",
+                "championName": "Blitzcrank",
+                "kills": 0,
+                "deaths": 3,
+                "assists": 12,
+                "win": true
+            }
+        ]
+    }
+}

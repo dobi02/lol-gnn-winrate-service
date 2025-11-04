@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897614264",
+        "participants": [
+            "jw1k-m51tA_vttw3Qp3WsdnNJ8HLII0yXAjXnpqer7nBsGvE7IbG_51_yBoMRXQculy7JGvJTA-qnA",
+            "2rmZP_McJxbE8WS0dXwsrkauglkFht-Fl3SgF466QjaKuKBXPR_XUvZK2MW23ADp2FqnhTYw720WGA",
+            "k7X3dlyEsKc298eFF58sxOUkpEC_DG_ajp_gFvfWeDhFLuPZ4mm56axJGFH3p6OZgaX6m2-rTigisw",
+            "FYwdTgJQbA7oFiPysVYBBWjbNaBWiwK13rMJOJXeIHQns2M_6q1HrpVGFQO5PlWRxxkFwq5RvD-XgQ",
+            "NAvC4_X0xb_-HtE4RlG-4Efu_9GY1AknzcQHCajUpYl-kf-5-FmcpmmRu_yZbf1DyNEZ2OyS9UcBhw",
+            "tV4MyzFYk_eJT7qGjqLmVrZE-Gbn8qq84Y3culBQiz_5vuzPZgQNW80B2sU9e-bQ6rPSkMgUH8I6ZQ",
+            "QRqVxEWszIOySLB87Y1DksPWpfiwX9NhST_bVnv2M1vncRAOfffQOgvB0rZUhqa_SSMtfBpC6wjFeQ",
+            "WkHlTM5FPmWr2DVsV8gx-khd4jS3envWT-WjpWZEZfofFqFBv5hAW1uYYRTzaR6_vABHmARUPcZ3CA",
+            "_cEQx2a-mMpstcNRpQCj_ErZg1oFvZjN-cXblVMYd4C9HDMNEFU_6AXw3IQXRGxDZNf-jvHB-bOSHw",
+            "tfNmbuLixZZ_tAbncGtp6krbF6k0GJFaHJ_MG--aARfI6edE6muk0GpBDveJlvlJAMsLtaSC3UeLWg"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762184733752,
+        "gameDuration": 1679,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "jw1k-m51tA_vttw3Qp3WsdnNJ8HLII0yXAjXnpqer7nBsGvE7IbG_51_yBoMRXQculy7JGvJTA-qnA",
+                "summonerName": "",
+                "championName": "Mordekaiser",
+                "kills": 9,
+                "deaths": 3,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "2rmZP_McJxbE8WS0dXwsrkauglkFht-Fl3SgF466QjaKuKBXPR_XUvZK2MW23ADp2FqnhTYw720WGA",
+                "summonerName": "",
+                "championName": "Viego",
+                "kills": 2,
+                "deaths": 6,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "k7X3dlyEsKc298eFF58sxOUkpEC_DG_ajp_gFvfWeDhFLuPZ4mm56axJGFH3p6OZgaX6m2-rTigisw",
+                "summonerName": "",
+                "championName": "Orianna",
+                "kills": 3,
+                "deaths": 6,
+                "assists": 7,
+                "win": false
+            },
+            {
+                "puuid": "FYwdTgJQbA7oFiPysVYBBWjbNaBWiwK13rMJOJXeIHQns2M_6q1HrpVGFQO5PlWRxxkFwq5RvD-XgQ",
+                "summonerName": "",
+                "championName": "Tristana",
+                "kills": 7,
+                "deaths": 7,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "NAvC4_X0xb_-HtE4RlG-4Efu_9GY1AknzcQHCajUpYl-kf-5-FmcpmmRu_yZbf1DyNEZ2OyS9UcBhw",
+                "summonerName": "",
+                "championName": "Morgana",
+                "kills": 6,
+                "deaths": 10,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "tV4MyzFYk_eJT7qGjqLmVrZE-Gbn8qq84Y3culBQiz_5vuzPZgQNW80B2sU9e-bQ6rPSkMgUH8I6ZQ",
+                "summonerName": "",
+                "championName": "Graves",
+                "kills": 2,
+                "deaths": 10,
+                "assists": 2,
+                "win": true
+            },
+            {
+                "puuid": "QRqVxEWszIOySLB87Y1DksPWpfiwX9NhST_bVnv2M1vncRAOfffQOgvB0rZUhqa_SSMtfBpC6wjFeQ",
+                "summonerName": "",
+                "championName": "MonkeyKing",
+                "kills": 4,
+                "deaths": 4,
+                "assists": 13,
+                "win": true
+            },
+            {
+                "puuid": "WkHlTM5FPmWr2DVsV8gx-khd4jS3envWT-WjpWZEZfofFqFBv5hAW1uYYRTzaR6_vABHmARUPcZ3CA",
+                "summonerName": "",
+                "championName": "Malzahar",
+                "kills": 3,
+                "deaths": 3,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "_cEQx2a-mMpstcNRpQCj_ErZg1oFvZjN-cXblVMYd4C9HDMNEFU_6AXw3IQXRGxDZNf-jvHB-bOSHw",
+                "summonerName": "",
+                "championName": "Smolder",
+                "kills": 10,
+                "deaths": 6,
+                "assists": 11,
+                "win": true
+            },
+            {
+                "puuid": "tfNmbuLixZZ_tAbncGtp6krbF6k0GJFaHJ_MG--aARfI6edE6muk0GpBDveJlvlJAMsLtaSC3UeLWg",
+                "summonerName": "",
+                "championName": "MissFortune",
+                "kills": 13,
+                "deaths": 4,
+                "assists": 14,
+                "win": true
+            }
+        ]
+    }
+}

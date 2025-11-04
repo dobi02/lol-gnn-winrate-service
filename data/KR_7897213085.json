@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897213085",
+        "participants": [
+            "z-fr6wh0Zllb-eN-_hp-peb_wQtWVztBET8n5xBFNL-EGDzGm-yjtgHnveE60Oj0TQl79-hHwky7Mw",
+            "_LtnqNlr1EvQqwprKAvisB0WQALaPP0RuYMKseHbU907OOKgKZWZATytJq2vcHqBw89085N_136H8w",
+            "rclY7DAsE1gwhRd4NwiTQZZaxotQaXOu_ox8bCFNZv54rMkw-_xLTA1sgS2qQVzWMblmn5t0nBMuug",
+            "DFI7rPB0GDd49ooRS6_fglOhNjg5kqBuIhY80DkU9BKIuFSovCiDQ5modaHrVCxGy-zJxQS4TxFvgQ",
+            "EdmaKI73Mj1zeALh7pJr4PSuaFIJ96ZZACR8YzIQw0qYO0O8A44BoFSy1mloZb4sm8LKOkJrB5eJBQ",
+            "vUofFYjWfliRaEq1caTPHam_lrlulkeZB5AOvvYka9aLqg23u7vKIhc2Vq3TuQ0wbLQlxJW6Bst8ug",
+            "ErwiROel-dSOs6MSKAS9OY2eEEmWuS6eLMWAS1vCZr-4RIopmYeXM3i0AzASeDdSnQAnso0Ni4oZZQ",
+            "OkawLaC8HluxrMRPWmc3LZIXgUJyYkx_slXBFYQieQUm2rm_fuPHBOKZnRSZMxIaNyd_Ap6XTQ2E_g",
+            "eO905GwOLjRd32X59gZiqYdOxKrg55U7aNNaKVL0tHfG_insCQJWWimy2Bh67RW9kLerp5J1yKjc1g",
+            "XZCR0oqdsZLVuFeOV7TlL2UGoLoZ-Qam3BfW8LB5R1LRtgsmXQPE1pB1M2IuffPquDj7swG159erjQ"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762171521286,
+        "gameDuration": 911,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "z-fr6wh0Zllb-eN-_hp-peb_wQtWVztBET8n5xBFNL-EGDzGm-yjtgHnveE60Oj0TQl79-hHwky7Mw",
+                "summonerName": "",
+                "championName": "Jax",
+                "kills": 1,
+                "deaths": 0,
+                "assists": 2,
+                "win": true
+            },
+            {
+                "puuid": "_LtnqNlr1EvQqwprKAvisB0WQALaPP0RuYMKseHbU907OOKgKZWZATytJq2vcHqBw89085N_136H8w",
+                "summonerName": "",
+                "championName": "Graves",
+                "kills": 7,
+                "deaths": 1,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "rclY7DAsE1gwhRd4NwiTQZZaxotQaXOu_ox8bCFNZv54rMkw-_xLTA1sgS2qQVzWMblmn5t0nBMuug",
+                "summonerName": "",
+                "championName": "Orianna",
+                "kills": 4,
+                "deaths": 1,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "DFI7rPB0GDd49ooRS6_fglOhNjg5kqBuIhY80DkU9BKIuFSovCiDQ5modaHrVCxGy-zJxQS4TxFvgQ",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 12,
+                "deaths": 0,
+                "assists": 1,
+                "win": true
+            },
+            {
+                "puuid": "EdmaKI73Mj1zeALh7pJr4PSuaFIJ96ZZACR8YzIQw0qYO0O8A44BoFSy1mloZb4sm8LKOkJrB5eJBQ",
+                "summonerName": "",
+                "championName": "Sona",
+                "kills": 0,
+                "deaths": 0,
+                "assists": 10,
+                "win": true
+            },
+            {
+                "puuid": "vUofFYjWfliRaEq1caTPHam_lrlulkeZB5AOvvYka9aLqg23u7vKIhc2Vq3TuQ0wbLQlxJW6Bst8ug",
+                "summonerName": "",
+                "championName": "Chogath",
+                "kills": 0,
+                "deaths": 3,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "ErwiROel-dSOs6MSKAS9OY2eEEmWuS6eLMWAS1vCZr-4RIopmYeXM3i0AzASeDdSnQAnso0Ni4oZZQ",
+                "summonerName": "",
+                "championName": "Belveth",
+                "kills": 1,
+                "deaths": 5,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "OkawLaC8HluxrMRPWmc3LZIXgUJyYkx_slXBFYQieQUm2rm_fuPHBOKZnRSZMxIaNyd_Ap6XTQ2E_g",
+                "summonerName": "",
+                "championName": "Irelia",
+                "kills": 0,
+                "deaths": 6,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "eO905GwOLjRd32X59gZiqYdOxKrg55U7aNNaKVL0tHfG_insCQJWWimy2Bh67RW9kLerp5J1yKjc1g",
+                "summonerName": "",
+                "championName": "Mel",
+                "kills": 0,
+                "deaths": 7,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "XZCR0oqdsZLVuFeOV7TlL2UGoLoZ-Qam3BfW8LB5R1LRtgsmXQPE1pB1M2IuffPquDj7swG159erjQ",
+                "summonerName": "",
+                "championName": "Yuumi",
+                "kills": 0,
+                "deaths": 3,
+                "assists": 0,
+                "win": false
+            }
+        ]
+    }
+}

@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897715217",
+        "participants": [
+            "h7dXzFv0aQjLbKh9LsxJIuB0nPJhlZVYQTksAGE3JQwwFBh7fRaoAd1TVZm4GI0DVP02qjRxGqiYEA",
+            "vcMRHleOEHN3HDuKK9HiErKBUFE3iAazP3cGpGEZuLKvs1UuH31zFMU8J0oeiqDzhRclpL0457xJ2A",
+            "sg0hbOUbN_46rfFit3nQ3CZKd4Uon4c4DWE-uTGG6SF7rNkru5a716gk9ZwBP_gZZARzc0bYfa6stQ",
+            "XU6b9ZivJ3aV31aR76yOuP13MHwZqSItvtY0rV5I1bac36L32sapfycAHlStUGTC7MX4mmnlfJ3ThA",
+            "myQrQmjDLABPup_GFTHhiX5nPY7a_tQzt7fVYPZqRyjgU3nVSZeHFat0Cx7o4Ci1MFKznk7QIyyKHw",
+            "UU6lLVQSzsTfYRHS6tndttietPooVkdkw5mqM4SWdjOyVpaunwjcG6UZiY-TCZ_sxgtHwI8bHTsXFQ",
+            "cqOkQMz-FJiJBzfQEUQZJ3vGu7mRj2m_YQ699-mwqMhmOqfOr1NHaVVGCbHd1sgt3C3eXotbQVZU4w",
+            "kO2w5AJaDAvIDX28NQfSy4DHlf7SNFVNFHE1VhXigEm6gusuGZLKL7HKOGCQ4gZXMwpG3EZjoTo4ZQ",
+            "0SYGupxbPeRir7m-9Id0w5y3Z5K1k79AEQM2W1JyXGSoG4XOf2YcJimS5rQj42UUsEUgVkuTsHYgvA",
+            "s2jBqklJWF6BXd7HL3klRwtsxoY7pwEGciFmzMq8xK74tz_2c7W58yjAbm4WaWio9AC48WLq4u7c3w"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762191373125,
+        "gameDuration": 1665,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "h7dXzFv0aQjLbKh9LsxJIuB0nPJhlZVYQTksAGE3JQwwFBh7fRaoAd1TVZm4GI0DVP02qjRxGqiYEA",
+                "summonerName": "",
+                "championName": "Irelia",
+                "kills": 4,
+                "deaths": 3,
+                "assists": 8,
+                "win": true
+            },
+            {
+                "puuid": "vcMRHleOEHN3HDuKK9HiErKBUFE3iAazP3cGpGEZuLKvs1UuH31zFMU8J0oeiqDzhRclpL0457xJ2A",
+                "summonerName": "",
+                "championName": "LeeSin",
+                "kills": 6,
+                "deaths": 3,
+                "assists": 6,
+                "win": true
+            },
+            {
+                "puuid": "sg0hbOUbN_46rfFit3nQ3CZKd4Uon4c4DWE-uTGG6SF7rNkru5a716gk9ZwBP_gZZARzc0bYfa6stQ",
+                "summonerName": "",
+                "championName": "Sylas",
+                "kills": 10,
+                "deaths": 4,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "XU6b9ZivJ3aV31aR76yOuP13MHwZqSItvtY0rV5I1bac36L32sapfycAHlStUGTC7MX4mmnlfJ3ThA",
+                "summonerName": "",
+                "championName": "Ashe",
+                "kills": 12,
+                "deaths": 4,
+                "assists": 8,
+                "win": true
+            },
+            {
+                "puuid": "myQrQmjDLABPup_GFTHhiX5nPY7a_tQzt7fVYPZqRyjgU3nVSZeHFat0Cx7o4Ci1MFKznk7QIyyKHw",
+                "summonerName": "",
+                "championName": "Nautilus",
+                "kills": 1,
+                "deaths": 7,
+                "assists": 14,
+                "win": true
+            },
+            {
+                "puuid": "UU6lLVQSzsTfYRHS6tndttietPooVkdkw5mqM4SWdjOyVpaunwjcG6UZiY-TCZ_sxgtHwI8bHTsXFQ",
+                "summonerName": "",
+                "championName": "RekSai",
+                "kills": 2,
+                "deaths": 6,
+                "assists": 3,
+                "win": false
+            },
+            {
+                "puuid": "cqOkQMz-FJiJBzfQEUQZJ3vGu7mRj2m_YQ699-mwqMhmOqfOr1NHaVVGCbHd1sgt3C3eXotbQVZU4w",
+                "summonerName": "",
+                "championName": "XinZhao",
+                "kills": 8,
+                "deaths": 6,
+                "assists": 7,
+                "win": false
+            },
+            {
+                "puuid": "kO2w5AJaDAvIDX28NQfSy4DHlf7SNFVNFHE1VhXigEm6gusuGZLKL7HKOGCQ4gZXMwpG3EZjoTo4ZQ",
+                "summonerName": "",
+                "championName": "Syndra",
+                "kills": 3,
+                "deaths": 6,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "0SYGupxbPeRir7m-9Id0w5y3Z5K1k79AEQM2W1JyXGSoG4XOf2YcJimS5rQj42UUsEUgVkuTsHYgvA",
+                "summonerName": "",
+                "championName": "Varus",
+                "kills": 6,
+                "deaths": 7,
+                "assists": 8,
+                "win": false
+            },
+            {
+                "puuid": "s2jBqklJWF6BXd7HL3klRwtsxoY7pwEGciFmzMq8xK74tz_2c7W58yjAbm4WaWio9AC48WLq4u7c3w",
+                "summonerName": "",
+                "championName": "Morgana",
+                "kills": 2,
+                "deaths": 8,
+                "assists": 12,
+                "win": false
+            }
+        ]
+    }
+}

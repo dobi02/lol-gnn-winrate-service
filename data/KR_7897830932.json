@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897830932",
+        "participants": [
+            "xIB0JGHpLZIJpiwel3E1kZVJkMWf8Rsq3UmGaaKE-HU-nUkohAnFpqWA4jFLQPLa7fJxJVgR2WIrjg",
+            "9MlyKU2g10lwauUpgHLBZgMfgjCT15DuGidZvX_d3B5IgvV9FKnx8Sx1O1gTxc0xl-kowxjrvOLeBQ",
+            "WE6yrM7Jcs93uebrOPg-aJygLw92M1KtAvITCHgoMP7X-UqQG4Uigxcgur0HuGK1exNYhwXbBVMEwg",
+            "-_I8OASY8feVUTkM0KOvbppu6D7XLLxtkZEGt3eTVKwZdJBAYyH8Y3X_IViGIai-1SaPAbWJbfdzRg",
+            "mmJY8-rEMvVZYy4rNEuPTRtDD6AZigzh9i3CzTkPAMfdrN4GQMlidrtXTCcOwG0Bvw4kJ_2OHqwQ8A",
+            "vl9erH9l8Owwchty25xXIc-Icri67EkppZ8JbbH4dqRO2mZOzPIWIUNT4Cb30Y9fEjnUpfpWvcy8eA",
+            "2Ph5RMPm3UCkqB5NkAiMRb7TY1ELwSkyox9gXPqb7x3ZRGh-akgTVDvHU8QyRtZ4qltmPbUNDjmHqg",
+            "NJp1RB8TgeigQ6SIT6efYkNBtYMpyUqjhYDmPEMknbr1gZfo9Q4QKZyOU6xVDxPXWLiw2eLMapES4g",
+            "Pc3XVeSR58cSEO7mzKOm1arKJHQAvs9iwwU6m9ndjvjBJc--m-Hx7JO-I_GMl-T9h5ZbRxJM9dJM-Q",
+            "CaJ45SBpqIR20DXOHum_MafwpVvASqbKqmDj8YpqZGM9ayY8Mpqb_8MtE0eS3W1hugd9JEjYWH6Lvg"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762217441935,
+        "gameDuration": 1529,
+        "gameMode": "SWIFTPLAY",
+        "participants": [
+            {
+                "puuid": "xIB0JGHpLZIJpiwel3E1kZVJkMWf8Rsq3UmGaaKE-HU-nUkohAnFpqWA4jFLQPLa7fJxJVgR2WIrjg",
+                "summonerName": "",
+                "championName": "Alistar",
+                "kills": 2,
+                "deaths": 6,
+                "assists": 7,
+                "win": false
+            },
+            {
+                "puuid": "9MlyKU2g10lwauUpgHLBZgMfgjCT15DuGidZvX_d3B5IgvV9FKnx8Sx1O1gTxc0xl-kowxjrvOLeBQ",
+                "summonerName": "",
+                "championName": "Darius",
+                "kills": 5,
+                "deaths": 9,
+                "assists": 6,
+                "win": false
+            },
+            {
+                "puuid": "WE6yrM7Jcs93uebrOPg-aJygLw92M1KtAvITCHgoMP7X-UqQG4Uigxcgur0HuGK1exNYhwXbBVMEwg",
+                "summonerName": "",
+                "championName": "Caitlyn",
+                "kills": 9,
+                "deaths": 11,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "-_I8OASY8feVUTkM0KOvbppu6D7XLLxtkZEGt3eTVKwZdJBAYyH8Y3X_IViGIai-1SaPAbWJbfdzRg",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 7,
+                "deaths": 6,
+                "assists": 11,
+                "win": false
+            },
+            {
+                "puuid": "mmJY8-rEMvVZYy4rNEuPTRtDD6AZigzh9i3CzTkPAMfdrN4GQMlidrtXTCcOwG0Bvw4kJ_2OHqwQ8A",
+                "summonerName": "",
+                "championName": "Mel",
+                "kills": 8,
+                "deaths": 8,
+                "assists": 9,
+                "win": false
+            },
+            {
+                "puuid": "vl9erH9l8Owwchty25xXIc-Icri67EkppZ8JbbH4dqRO2mZOzPIWIUNT4Cb30Y9fEjnUpfpWvcy8eA",
+                "summonerName": "",
+                "championName": "Garen",
+                "kills": 5,
+                "deaths": 5,
+                "assists": 2,
+                "win": true
+            },
+            {
+                "puuid": "2Ph5RMPm3UCkqB5NkAiMRb7TY1ELwSkyox9gXPqb7x3ZRGh-akgTVDvHU8QyRtZ4qltmPbUNDjmHqg",
+                "summonerName": "",
+                "championName": "Zyra",
+                "kills": 4,
+                "deaths": 2,
+                "assists": 6,
+                "win": true
+            },
+            {
+                "puuid": "NJp1RB8TgeigQ6SIT6efYkNBtYMpyUqjhYDmPEMknbr1gZfo9Q4QKZyOU6xVDxPXWLiw2eLMapES4g",
+                "summonerName": "",
+                "championName": "Akali",
+                "kills": 10,
+                "deaths": 7,
+                "assists": 6,
+                "win": true
+            },
+            {
+                "puuid": "Pc3XVeSR58cSEO7mzKOm1arKJHQAvs9iwwU6m9ndjvjBJc--m-Hx7JO-I_GMl-T9h5ZbRxJM9dJM-Q",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 13,
+                "deaths": 6,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "CaJ45SBpqIR20DXOHum_MafwpVvASqbKqmDj8YpqZGM9ayY8Mpqb_8MtE0eS3W1hugd9JEjYWH6Lvg",
+                "summonerName": "",
+                "championName": "Leblanc",
+                "kills": 7,
+                "deaths": 11,
+                "assists": 13,
+                "win": true
+            }
+        ]
+    }
+}

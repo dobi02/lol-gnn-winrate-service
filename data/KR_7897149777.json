@@ -1,0 +1,174 @@
+{
+    "metadata": {
+        "matchId": "KR_7897149777",
+        "participants": [
+            "ZssQkrp-eYcjpT0prm8csF3E-FXsFJjZXxICufK--OGM4xDhzfKvu-Hoq5EAvqqQVUYV18XMvJBnVw",
+            "L8eOQhm7E8ulVmbO261ASip1NkgZm4cOXJkY8NDvZOaIqFxxASriJQXORm4gKvUDOeVDPrigegSuLg",
+            "Z4R-ThvuKbr1jxALyfiAQNzE-mEOEfCFUD9_VQhZKchNZce8po-FGMsIZ-ZDVe0Q-W92J9qBDvZyvA",
+            "McUyc-dtZRaXU93mSWYFvq-XDB3mkhpCoV3gXKMJXpAQLeenASftV-5olf22xu5VpW14Anzgs1zcQQ",
+            "Qmxso2q8D0vC72fZCX5rpWk78SymNpHEB4KqVR52NTLZpzVjvwkO4AgN636AI0j3nhsOoHxF9CLAog",
+            "6qIeTBXohe54CmMyGdCObmxJueD664vuFBdebrLUs177iGRa02ONUb-qGNWl7HgPIw4bOGWnheH7mA",
+            "XubAVg9o8UbJIVQsnxDXPZb6pcNvdI_9eExcD-2QvPVZCAHBn-wZGdoO8n5XgZywaR3MO__c5OOUQw",
+            "uN1qfbEjGmN1KLpb71HbScWmpFu9vIrW2VSkdL89nnEvzivty0g3yCy54rymbsu2o9hjflvmzbL6IA",
+            "NhBbc_lJv6jpOcHl9HC6vsFSrXQ_CK76-W0ppXShSacoHOCG3wSe6iX_RnOtwIKMFvkD0BCJ1gfWOg",
+            "8upFU30RH-8u4RH6weRdi5zF-6nUDrGYIR53WB5YmqVMLo_5qbMg-3kQ17D3wXmGXJaLc3Whyue7Wg",
+            "4u-IJ1MR5_3IA3JkQzJFX2Ukeuto2_zes76T4lsFf08ad-lg1STVi0GX3uwfN347ToxyNgBIX-gIbw",
+            "7TcyjZUZrN_TP9rVsQZh2JckDBQU00vYvb8RJT-v4qGvF7-vfPpe2rZ1v3GwXrL2EurBkmAleo_HDA",
+            "KYDCepGA3pz21fR-iabxwvAyzyDcbGMAmnLZV9-_feROkXTO6OoHCW2LZI2r99WXPE6VS4t9wfJ1Iw",
+            "krUYVOpEGJsKYHVeNhJMU3Zpv5XQZsnZTzLnTR0wXMMIFW3jBncc_XJHuHqn2gjzBriKFrEl9rt6HA",
+            "NSC0E_4R7Y5nGo_5_joXl4oVfdDQ-_piH50SS7YeEAlWlDTsBGRzzBDIatnjGLAPKVQZArQG9_30Tw",
+            "aAcbJPAe2YKePoqtlFkRn695T-RBKuguE6DF2J_Hiy8htwYLLvxG2k-GFwBgULA6IK1byqdi7pVBGw"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762169492971,
+        "gameDuration": 1716,
+        "gameMode": "CHERRY",
+        "participants": [
+            {
+                "puuid": "ZssQkrp-eYcjpT0prm8csF3E-FXsFJjZXxICufK--OGM4xDhzfKvu-Hoq5EAvqqQVUYV18XMvJBnVw",
+                "summonerName": "",
+                "championName": "LeeSin",
+                "kills": 11,
+                "deaths": 10,
+                "assists": 5,
+                "win": true
+            },
+            {
+                "puuid": "L8eOQhm7E8ulVmbO261ASip1NkgZm4cOXJkY8NDvZOaIqFxxASriJQXORm4gKvUDOeVDPrigegSuLg",
+                "summonerName": "",
+                "championName": "MasterYi",
+                "kills": 14,
+                "deaths": 4,
+                "assists": 11,
+                "win": true
+            },
+            {
+                "puuid": "Z4R-ThvuKbr1jxALyfiAQNzE-mEOEfCFUD9_VQhZKchNZce8po-FGMsIZ-ZDVe0Q-W92J9qBDvZyvA",
+                "summonerName": "",
+                "championName": "Illaoi",
+                "kills": 7,
+                "deaths": 7,
+                "assists": 10,
+                "win": true
+            },
+            {
+                "puuid": "McUyc-dtZRaXU93mSWYFvq-XDB3mkhpCoV3gXKMJXpAQLeenASftV-5olf22xu5VpW14Anzgs1zcQQ",
+                "summonerName": "",
+                "championName": "Jax",
+                "kills": 14,
+                "deaths": 3,
+                "assists": 13,
+                "win": true
+            },
+            {
+                "puuid": "Qmxso2q8D0vC72fZCX5rpWk78SymNpHEB4KqVR52NTLZpzVjvwkO4AgN636AI0j3nhsOoHxF9CLAog",
+                "summonerName": "",
+                "championName": "Syndra",
+                "kills": 5,
+                "deaths": 5,
+                "assists": 6,
+                "win": false
+            },
+            {
+                "puuid": "6qIeTBXohe54CmMyGdCObmxJueD664vuFBdebrLUs177iGRa02ONUb-qGNWl7HgPIw4bOGWnheH7mA",
+                "summonerName": "",
+                "championName": "Senna",
+                "kills": 6,
+                "deaths": 7,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "XubAVg9o8UbJIVQsnxDXPZb6pcNvdI_9eExcD-2QvPVZCAHBn-wZGdoO8n5XgZywaR3MO__c5OOUQw",
+                "summonerName": "",
+                "championName": "Sona",
+                "kills": 3,
+                "deaths": 6,
+                "assists": 9,
+                "win": true
+            },
+            {
+                "puuid": "uN1qfbEjGmN1KLpb71HbScWmpFu9vIrW2VSkdL89nnEvzivty0g3yCy54rymbsu2o9hjflvmzbL6IA",
+                "summonerName": "",
+                "championName": "Braum",
+                "kills": 3,
+                "deaths": 5,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "NhBbc_lJv6jpOcHl9HC6vsFSrXQ_CK76-W0ppXShSacoHOCG3wSe6iX_RnOtwIKMFvkD0BCJ1gfWOg",
+                "summonerName": "",
+                "championName": "Jayce",
+                "kills": 5,
+                "deaths": 9,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "8upFU30RH-8u4RH6weRdi5zF-6nUDrGYIR53WB5YmqVMLo_5qbMg-3kQ17D3wXmGXJaLc3Whyue7Wg",
+                "summonerName": "",
+                "championName": "Briar",
+                "kills": 9,
+                "deaths": 6,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "4u-IJ1MR5_3IA3JkQzJFX2Ukeuto2_zes76T4lsFf08ad-lg1STVi0GX3uwfN347ToxyNgBIX-gIbw",
+                "summonerName": "",
+                "championName": "Leona",
+                "kills": 0,
+                "deaths": 4,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "7TcyjZUZrN_TP9rVsQZh2JckDBQU00vYvb8RJT-v4qGvF7-vfPpe2rZ1v3GwXrL2EurBkmAleo_HDA",
+                "summonerName": "",
+                "championName": "Alistar",
+                "kills": 5,
+                "deaths": 5,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "KYDCepGA3pz21fR-iabxwvAyzyDcbGMAmnLZV9-_feROkXTO6OoHCW2LZI2r99WXPE6VS4t9wfJ1Iw",
+                "summonerName": "",
+                "championName": "Riven",
+                "kills": 6,
+                "deaths": 6,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "krUYVOpEGJsKYHVeNhJMU3Zpv5XQZsnZTzLnTR0wXMMIFW3jBncc_XJHuHqn2gjzBriKFrEl9rt6HA",
+                "summonerName": "",
+                "championName": "Belveth",
+                "kills": 2,
+                "deaths": 8,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "NSC0E_4R7Y5nGo_5_joXl4oVfdDQ-_piH50SS7YeEAlWlDTsBGRzzBDIatnjGLAPKVQZArQG9_30Tw",
+                "summonerName": "",
+                "championName": "Kalista",
+                "kills": 0,
+                "deaths": 6,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "aAcbJPAe2YKePoqtlFkRn695T-RBKuguE6DF2J_Hiy8htwYLLvxG2k-GFwBgULA6IK1byqdi7pVBGw",
+                "summonerName": "",
+                "championName": "Alistar",
+                "kills": 4,
+                "deaths": 5,
+                "assists": 6,
+                "win": true
+            }
+        ]
+    }
+}

@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7898168769",
+        "participants": [
+            "CJrS0uYCqxuq-XiYoRRIXBEwHQhpIcJVwTdWOopnKYobu0ZrW30grfvvhcVHIuZoYBNFlkdSdeTB1A",
+            "6OWZZMwJrlVOqG0G_92NK_RPUQ8m8Otzl3dRz0--vsZ9-8BMwUGALYz7lYHDnK-b2euRuP-bZZFBxw",
+            "OlQCGMnFir9a2C3p7qT8Gd8ZecQmuaFlr4Lfhiqtlg3ABE_z6cX3yjFrLI5dWlPmXkXEugS0AOWM7g",
+            "xGpcqRd4fBeXvMQzNtO797BB-N2vicWHUKqK-RIfq06e1gvNvc0qHhxOMvTHiR0eHLEyNRjwOxTPhg",
+            "Rnxf5eza55YuX3Xa7Z9uMqEnUa9uu4u6Seq0Ky-a8oGGg94Ac_mvppAUFDsEQmuhM5UQtf9kTGzJkw",
+            "HbV480koiB25q_MGZcJsJADyhlCZLMD7-KIPW0xoOwUcV6sxbZtyc2uTvBfU2AAtRBagEbFVhPcHJg",
+            "wfcsLvZiFVdaMtVJ7U8btIlsQnoCVd8bRUMGof77jdtljHwJYS027lPXszLSj2ygFsyL75aRn1BGmA",
+            "ZhkVtTA2EG5MlTVPtzGeB2E-gb-0na9-GqEQXaPtf5Axk11JJeoz8Ger2XA8QcomUtI5Iic7mG2PyA",
+            "9-cn99mtavlyTf91H21XjK2kqL18Q7e52X_DaXCMeeub26UM1ewPPGdD4mH5GfYG-jltpN5zrcrEuQ",
+            "xmd5BGqNuGN-eFxweKU2WxiiCcecyZuuegmUuR8r1iL7MZ5ylptElOQ7FPkhOmVcQE7DDpFyB3kqxQ"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762246091744,
+        "gameDuration": 1802,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "CJrS0uYCqxuq-XiYoRRIXBEwHQhpIcJVwTdWOopnKYobu0ZrW30grfvvhcVHIuZoYBNFlkdSdeTB1A",
+                "summonerName": "",
+                "championName": "Teemo",
+                "kills": 5,
+                "deaths": 5,
+                "assists": 4,
+                "win": true
+            },
+            {
+                "puuid": "6OWZZMwJrlVOqG0G_92NK_RPUQ8m8Otzl3dRz0--vsZ9-8BMwUGALYz7lYHDnK-b2euRuP-bZZFBxw",
+                "summonerName": "",
+                "championName": "DrMundo",
+                "kills": 4,
+                "deaths": 4,
+                "assists": 13,
+                "win": true
+            },
+            {
+                "puuid": "OlQCGMnFir9a2C3p7qT8Gd8ZecQmuaFlr4Lfhiqtlg3ABE_z6cX3yjFrLI5dWlPmXkXEugS0AOWM7g",
+                "summonerName": "",
+                "championName": "AurelionSol",
+                "kills": 5,
+                "deaths": 6,
+                "assists": 7,
+                "win": true
+            },
+            {
+                "puuid": "xGpcqRd4fBeXvMQzNtO797BB-N2vicWHUKqK-RIfq06e1gvNvc0qHhxOMvTHiR0eHLEyNRjwOxTPhg",
+                "summonerName": "",
+                "championName": "Kaisa",
+                "kills": 18,
+                "deaths": 6,
+                "assists": 8,
+                "win": true
+            },
+            {
+                "puuid": "Rnxf5eza55YuX3Xa7Z9uMqEnUa9uu4u6Seq0Ky-a8oGGg94Ac_mvppAUFDsEQmuhM5UQtf9kTGzJkw",
+                "summonerName": "",
+                "championName": "Lux",
+                "kills": 2,
+                "deaths": 11,
+                "assists": 13,
+                "win": true
+            },
+            {
+                "puuid": "HbV480koiB25q_MGZcJsJADyhlCZLMD7-KIPW0xoOwUcV6sxbZtyc2uTvBfU2AAtRBagEbFVhPcHJg",
+                "summonerName": "",
+                "championName": "Jayce",
+                "kills": 3,
+                "deaths": 4,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "wfcsLvZiFVdaMtVJ7U8btIlsQnoCVd8bRUMGof77jdtljHwJYS027lPXszLSj2ygFsyL75aRn1BGmA",
+                "summonerName": "",
+                "championName": "Sylas",
+                "kills": 6,
+                "deaths": 7,
+                "assists": 14,
+                "win": false
+            },
+            {
+                "puuid": "ZhkVtTA2EG5MlTVPtzGeB2E-gb-0na9-GqEQXaPtf5Axk11JJeoz8Ger2XA8QcomUtI5Iic7mG2PyA",
+                "summonerName": "",
+                "championName": "Xerath",
+                "kills": 6,
+                "deaths": 5,
+                "assists": 9,
+                "win": false
+            },
+            {
+                "puuid": "9-cn99mtavlyTf91H21XjK2kqL18Q7e52X_DaXCMeeub26UM1ewPPGdD4mH5GfYG-jltpN5zrcrEuQ",
+                "summonerName": "",
+                "championName": "Jhin",
+                "kills": 15,
+                "deaths": 7,
+                "assists": 7,
+                "win": false
+            },
+            {
+                "puuid": "xmd5BGqNuGN-eFxweKU2WxiiCcecyZuuegmUuR8r1iL7MZ5ylptElOQ7FPkhOmVcQE7DDpFyB3kqxQ",
+                "summonerName": "",
+                "championName": "Galio",
+                "kills": 2,
+                "deaths": 11,
+                "assists": 13,
+                "win": false
+            }
+        ]
+    }
+}

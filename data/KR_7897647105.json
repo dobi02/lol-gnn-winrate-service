@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897647105",
+        "participants": [
+            "XkBjPDRSOWZ0q10kgRa2AeOXqbZhBHInxy-WB_BNaAusTYUbfjZ79puDy4VqqFhaxm0wxG4T_wY0zw",
+            "qZVHqEd8vJSGvUvOpMXP2MCgsjruU2deYayTRxFCyPeATUW8m9qyWIDOkTWv8Sh0yUoRHXiCakj78A",
+            "_XDTgjyhRyUdMI6OQJK6cxB-3YMolDubhtqL77T8EIDj4h3ZsyVAX13VmcBeOZ23Fu1eSPB9isJKMg",
+            "s2jBqklJWF6BXd7HL3klRwtsxoY7pwEGciFmzMq8xK74tz_2c7W58yjAbm4WaWio9AC48WLq4u7c3w",
+            "0SYGupxbPeRir7m-9Id0w5y3Z5K1k79AEQM2W1JyXGSoG4XOf2YcJimS5rQj42UUsEUgVkuTsHYgvA",
+            "StV7QsElmFNGduNq1hVrdMhnrabGXO4oBN4NhXG7sSGyImVvEy0YxGbfa8Vz9Fj6YAJ6Lhg9YLsTJw",
+            "YO_-z1RIZ4K91qPUHoMen2sadA-e94u5dEVXlkO14LufMcdF9ipBFTjSpa669lDW0s2Y7SA6_KTnKA",
+            "QG5WW2QUSjqxZdex7fancXopiDkhjumqjchI_awxTPzWDxNreI8MEXurD-V7j5bEYgXBuD5rvTCrbw",
+            "-IXY6ah73YJj0Bit1GBm2Zxueju1zFn5EMd4fL6OIzy-83UjJEatLjye9NQp2Dzg5I4TXCPZsTI76A",
+            "QVVvBcrcgOUUdUBYy02Dw5rlnPnfqtDugBLysgrgTxgcvXqotLY0mCkxRvSpLSKSkTgD9PBefhljBw"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762186304020,
+        "gameDuration": 2403,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "XkBjPDRSOWZ0q10kgRa2AeOXqbZhBHInxy-WB_BNaAusTYUbfjZ79puDy4VqqFhaxm0wxG4T_wY0zw",
+                "summonerName": "",
+                "championName": "Sion",
+                "kills": 11,
+                "deaths": 9,
+                "assists": 9,
+                "win": false
+            },
+            {
+                "puuid": "qZVHqEd8vJSGvUvOpMXP2MCgsjruU2deYayTRxFCyPeATUW8m9qyWIDOkTWv8Sh0yUoRHXiCakj78A",
+                "summonerName": "",
+                "championName": "Talon",
+                "kills": 14,
+                "deaths": 10,
+                "assists": 11,
+                "win": false
+            },
+            {
+                "puuid": "_XDTgjyhRyUdMI6OQJK6cxB-3YMolDubhtqL77T8EIDj4h3ZsyVAX13VmcBeOZ23Fu1eSPB9isJKMg",
+                "summonerName": "",
+                "championName": "Aurora",
+                "kills": 7,
+                "deaths": 11,
+                "assists": 12,
+                "win": false
+            },
+            {
+                "puuid": "s2jBqklJWF6BXd7HL3klRwtsxoY7pwEGciFmzMq8xK74tz_2c7W58yjAbm4WaWio9AC48WLq4u7c3w",
+                "summonerName": "",
+                "championName": "Caitlyn",
+                "kills": 10,
+                "deaths": 17,
+                "assists": 13,
+                "win": false
+            },
+            {
+                "puuid": "0SYGupxbPeRir7m-9Id0w5y3Z5K1k79AEQM2W1JyXGSoG4XOf2YcJimS5rQj42UUsEUgVkuTsHYgvA",
+                "summonerName": "",
+                "championName": "Morgana",
+                "kills": 8,
+                "deaths": 10,
+                "assists": 25,
+                "win": false
+            },
+            {
+                "puuid": "StV7QsElmFNGduNq1hVrdMhnrabGXO4oBN4NhXG7sSGyImVvEy0YxGbfa8Vz9Fj6YAJ6Lhg9YLsTJw",
+                "summonerName": "",
+                "championName": "Zac",
+                "kills": 6,
+                "deaths": 7,
+                "assists": 16,
+                "win": true
+            },
+            {
+                "puuid": "YO_-z1RIZ4K91qPUHoMen2sadA-e94u5dEVXlkO14LufMcdF9ipBFTjSpa669lDW0s2Y7SA6_KTnKA",
+                "summonerName": "",
+                "championName": "XinZhao",
+                "kills": 7,
+                "deaths": 11,
+                "assists": 18,
+                "win": true
+            },
+            {
+                "puuid": "QG5WW2QUSjqxZdex7fancXopiDkhjumqjchI_awxTPzWDxNreI8MEXurD-V7j5bEYgXBuD5rvTCrbw",
+                "summonerName": "",
+                "championName": "Leblanc",
+                "kills": 12,
+                "deaths": 10,
+                "assists": 18,
+                "win": true
+            },
+            {
+                "puuid": "-IXY6ah73YJj0Bit1GBm2Zxueju1zFn5EMd4fL6OIzy-83UjJEatLjye9NQp2Dzg5I4TXCPZsTI76A",
+                "summonerName": "",
+                "championName": "Draven",
+                "kills": 12,
+                "deaths": 14,
+                "assists": 16,
+                "win": true
+            },
+            {
+                "puuid": "QVVvBcrcgOUUdUBYy02Dw5rlnPnfqtDugBLysgrgTxgcvXqotLY0mCkxRvSpLSKSkTgD9PBefhljBw",
+                "summonerName": "",
+                "championName": "Pyke",
+                "kills": 19,
+                "deaths": 9,
+                "assists": 13,
+                "win": true
+            }
+        ]
+    }
+}

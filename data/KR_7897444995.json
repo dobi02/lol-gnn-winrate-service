@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897444995",
+        "participants": [
+            "ngfAPKR_cyH0shdHkBKySxlXeTaUoQwTTattN4sl7aVgsbLVIq0gcqXSppo6BqDxAMMP8DNcw-PYoQ",
+            "cQtTe6g0jMq5-HQTFTa9VOX97Rq-NIH1WeWiF9TxmJtIcOHithkfV_p3c7Tyglz-7Njm9OGVZxWKag",
+            "mrzzhucym6KVQSqG23n-Otd7cs6RaKdcZaI7Fjupv5mu1lRfnHagcHlbaYXBzwkj9pbAD2ehYcEK4Q",
+            "rancY5wmqyGvJu4xcA-lHZXorex2QCLooZen9pkxnlXfc0TkJhAX_ONQrDn6F3jKWdnKqC50ruICiw",
+            "53YxHDUZ3wHxaJnlh16AALRqWVbAd_NoUEYfS2lUfSZGaAhMi5rzZ9U1HCUCKfkSxAKAMrLOzE0zAQ",
+            "XmSaZSHRs8k-PXx0N99tXAfGo9XHy_Uw9o7w5gRptJk-5mbQ33TcjBQZfd52MGmVeT8zBNu0aTGy8Q",
+            "WWstjNFmB77WQSOCmrrxOWnDROsSThhi9aUaw-Aj9CPHKjK9RU0PecBdlZLePePjnPosaV6dAPjMog",
+            "PXhMWPklakJ2MkVegDEFWuMe2sFMRHSwFDCNpWG1IuU_Zt-KWSGGuG0XzHTMokkhSWCZLMcOLKukjA",
+            "_iwBl20WGjao1lN8yB-7NN74xFBNt62qVTYhxMA6L2c4YjTGzfNT2VYHP2Y8f7fnpOy5LPel3qc-FQ",
+            "9pR1BVio2D4u_QKWuB5q_tuHubkZm_bg0u8IF4wAlgldHbfDpJL6TKmObKNOs2r-mn9YbCHjl3YhWw"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762178678665,
+        "gameDuration": 947,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "ngfAPKR_cyH0shdHkBKySxlXeTaUoQwTTattN4sl7aVgsbLVIq0gcqXSppo6BqDxAMMP8DNcw-PYoQ",
+                "summonerName": "",
+                "championName": "Yone",
+                "kills": 0,
+                "deaths": 3,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "cQtTe6g0jMq5-HQTFTa9VOX97Rq-NIH1WeWiF9TxmJtIcOHithkfV_p3c7Tyglz-7Njm9OGVZxWKag",
+                "summonerName": "",
+                "championName": "Jax",
+                "kills": 1,
+                "deaths": 3,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "mrzzhucym6KVQSqG23n-Otd7cs6RaKdcZaI7Fjupv5mu1lRfnHagcHlbaYXBzwkj9pbAD2ehYcEK4Q",
+                "summonerName": "",
+                "championName": "Varus",
+                "kills": 2,
+                "deaths": 6,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "rancY5wmqyGvJu4xcA-lHZXorex2QCLooZen9pkxnlXfc0TkJhAX_ONQrDn6F3jKWdnKqC50ruICiw",
+                "summonerName": "",
+                "championName": "Jhin",
+                "kills": 0,
+                "deaths": 2,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "53YxHDUZ3wHxaJnlh16AALRqWVbAd_NoUEYfS2lUfSZGaAhMi5rzZ9U1HCUCKfkSxAKAMrLOzE0zAQ",
+                "summonerName": "",
+                "championName": "Thresh",
+                "kills": 1,
+                "deaths": 3,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "XmSaZSHRs8k-PXx0N99tXAfGo9XHy_Uw9o7w5gRptJk-5mbQ33TcjBQZfd52MGmVeT8zBNu0aTGy8Q",
+                "summonerName": "",
+                "championName": "Teemo",
+                "kills": 2,
+                "deaths": 0,
+                "assists": 1,
+                "win": true
+            },
+            {
+                "puuid": "WWstjNFmB77WQSOCmrrxOWnDROsSThhi9aUaw-Aj9CPHKjK9RU0PecBdlZLePePjnPosaV6dAPjMog",
+                "summonerName": "",
+                "championName": "Naafiri",
+                "kills": 10,
+                "deaths": 0,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "PXhMWPklakJ2MkVegDEFWuMe2sFMRHSwFDCNpWG1IuU_Zt-KWSGGuG0XzHTMokkhSWCZLMcOLKukjA",
+                "summonerName": "",
+                "championName": "Neeko",
+                "kills": 2,
+                "deaths": 2,
+                "assists": 5,
+                "win": true
+            },
+            {
+                "puuid": "_iwBl20WGjao1lN8yB-7NN74xFBNt62qVTYhxMA6L2c4YjTGzfNT2VYHP2Y8f7fnpOy5LPel3qc-FQ",
+                "summonerName": "",
+                "championName": "Caitlyn",
+                "kills": 3,
+                "deaths": 0,
+                "assists": 5,
+                "win": true
+            },
+            {
+                "puuid": "9pR1BVio2D4u_QKWuB5q_tuHubkZm_bg0u8IF4wAlgldHbfDpJL6TKmObKNOs2r-mn9YbCHjl3YhWw",
+                "summonerName": "",
+                "championName": "Taric",
+                "kills": 0,
+                "deaths": 2,
+                "assists": 5,
+                "win": true
+            }
+        ]
+    }
+}

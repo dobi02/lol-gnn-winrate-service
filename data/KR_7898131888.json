@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7898131888",
+        "participants": [
+            "T6yyKOfRAmL-9UC_f_b_Fwh8rQ-OirWmUOnnbv5gh7Qpv3m5eU7S6Gdiw-FmfYN1_ztr2s_2tox2FA",
+            "ia2HrWDgGQSbJdUejbIv0zdNOss95KNOJpFU6QbHIzE-YySbcaJ5H-Q8ujwhwAz1aJRiSWz0ChOrhQ",
+            "ghiFFaflhd5-FwHW_LpHt5ANvC5FlISbdl_-ELBT3C9uL_kcq1b-S2_bI5WMHzYDAbOUyLRWag_ZsQ",
+            "BFe8YfK_a-arRGZmmtrStRNnU8m8aVeT5Mok9YnqiRy3T2wMBiDzVSJd3hgUe7wkgG3RTKj0xnXQdQ",
+            "X23hxW1Wq-7AOlBonIUCtCOomZEH5JKBhDqsnnVoRoo70-X_8JdtRTkHcgBzY6fpg1Q-HyrTxXaVpQ",
+            "xj_-zw1A29jBr5MlvV7B2YjQWpdeGwq7PMT0FS6RCYjjLvZgeUwZXIPIXl8GCgRRClMG6m3-FDVq5A",
+            "1Ui2ZgPvC7BDs80dvFBZlItkaJBf5W6cTfmOKQXhGq-TStJjaIdQ_HTxuGQcBDFwc2XxKUOk0YUDpQ",
+            "4zEsj3LiCb8x5nB-xjf8X83hLJ_zNOvOUWCd67d3kwO4AhOWUALN_FcVix23aTssxeQe9rSZQuY5aQ",
+            "hf1nnmQRuL9-KiB0QX3YS8BUF8xOZpRfHOz9mD_fh7uRzzcr8uzlhHkonp3K7NzegeEuIFHcGSB9OA",
+            "pftCkD1onmxOu6PkYbh6iymI5Pq2JYo-viGfNU94_1S4jUhzHiLQKF_khXRMaL77Wo5BtbYOucHvtA"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762243927091,
+        "gameDuration": 914,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "T6yyKOfRAmL-9UC_f_b_Fwh8rQ-OirWmUOnnbv5gh7Qpv3m5eU7S6Gdiw-FmfYN1_ztr2s_2tox2FA",
+                "summonerName": "",
+                "championName": "KSante",
+                "kills": 6,
+                "deaths": 2,
+                "assists": 5,
+                "win": true
+            },
+            {
+                "puuid": "ia2HrWDgGQSbJdUejbIv0zdNOss95KNOJpFU6QbHIzE-YySbcaJ5H-Q8ujwhwAz1aJRiSWz0ChOrhQ",
+                "summonerName": "",
+                "championName": "Briar",
+                "kills": 9,
+                "deaths": 2,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "ghiFFaflhd5-FwHW_LpHt5ANvC5FlISbdl_-ELBT3C9uL_kcq1b-S2_bI5WMHzYDAbOUyLRWag_ZsQ",
+                "summonerName": "",
+                "championName": "TwistedFate",
+                "kills": 2,
+                "deaths": 1,
+                "assists": 6,
+                "win": true
+            },
+            {
+                "puuid": "BFe8YfK_a-arRGZmmtrStRNnU8m8aVeT5Mok9YnqiRy3T2wMBiDzVSJd3hgUe7wkgG3RTKj0xnXQdQ",
+                "summonerName": "",
+                "championName": "Sivir",
+                "kills": 2,
+                "deaths": 1,
+                "assists": 6,
+                "win": true
+            },
+            {
+                "puuid": "X23hxW1Wq-7AOlBonIUCtCOomZEH5JKBhDqsnnVoRoo70-X_8JdtRTkHcgBzY6fpg1Q-HyrTxXaVpQ",
+                "summonerName": "",
+                "championName": "Leblanc",
+                "kills": 1,
+                "deaths": 4,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "xj_-zw1A29jBr5MlvV7B2YjQWpdeGwq7PMT0FS6RCYjjLvZgeUwZXIPIXl8GCgRRClMG6m3-FDVq5A",
+                "summonerName": "",
+                "championName": "Quinn",
+                "kills": 2,
+                "deaths": 5,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "1Ui2ZgPvC7BDs80dvFBZlItkaJBf5W6cTfmOKQXhGq-TStJjaIdQ_HTxuGQcBDFwc2XxKUOk0YUDpQ",
+                "summonerName": "",
+                "championName": "Nunu",
+                "kills": 3,
+                "deaths": 4,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "4zEsj3LiCb8x5nB-xjf8X83hLJ_zNOvOUWCd67d3kwO4AhOWUALN_FcVix23aTssxeQe9rSZQuY5aQ",
+                "summonerName": "",
+                "championName": "Malzahar",
+                "kills": 2,
+                "deaths": 6,
+                "assists": 3,
+                "win": false
+            },
+            {
+                "puuid": "hf1nnmQRuL9-KiB0QX3YS8BUF8xOZpRfHOz9mD_fh7uRzzcr8uzlhHkonp3K7NzegeEuIFHcGSB9OA",
+                "summonerName": "",
+                "championName": "Samira",
+                "kills": 3,
+                "deaths": 3,
+                "assists": 3,
+                "win": false
+            },
+            {
+                "puuid": "pftCkD1onmxOu6PkYbh6iymI5Pq2JYo-viGfNU94_1S4jUhzHiLQKF_khXRMaL77Wo5BtbYOucHvtA",
+                "summonerName": "",
+                "championName": "Braum",
+                "kills": 0,
+                "deaths": 2,
+                "assists": 6,
+                "win": false
+            }
+        ]
+    }
+}

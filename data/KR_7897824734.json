@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897824734",
+        "participants": [
+            "Pc3XVeSR58cSEO7mzKOm1arKJHQAvs9iwwU6m9ndjvjBJc--m-Hx7JO-I_GMl-T9h5ZbRxJM9dJM-Q",
+            "2Ph5RMPm3UCkqB5NkAiMRb7TY1ELwSkyox9gXPqb7x3ZRGh-akgTVDvHU8QyRtZ4qltmPbUNDjmHqg",
+            "Ng8nrVVgtdXYpIpQ4A8G8vBM9od97Ud3fqn9H-12g_JiNN7gWUrXv_AsCOwaSaMhp2pNteu7spJRqw",
+            "3EW3Kkj2FTjf8YZE5IMmM8lX_qhXrMzIrwfoZbqLQEkH9ovyFOJNMwE1POf4gYH6aqrbD_wL1_JHKA",
+            "tvMRlxtxk4_sGmKr9Mb_FVhdtff6KP3pWTaFUB9w14cDQ_mPc9OnJydUxJmPkKbR3YFeUleR2Ll-dg",
+            "bTgtd3AFvXrT9l1st0KmEfCl50dsDraIGBlCxBstTXZtu0xEoSJgRCOfgDeOIl-1cyhf42lIk_9ELg",
+            "BwvqleHRVqqS1TUOeyokQs_R4saDYKVG1nnCvYXqqHWjapY-OGLIMj4ycBr0c3yXlA3fIshHLe6yiQ",
+            "lcQHlzlZJz3rxYlmZk4bQgOejfqaip8YzIJB7rwq-ctNkGaOWBmosWvwSZ_YD63uLT7rLEsDB85sRA",
+            "7Jt8gKr7pyONJONcltRzcoOSCD9afD0Ge68TVvgIx2X_ETBX_lRhgyM3yaq8fIAY4XnQzs0vKr2v9A",
+            "V6PHjYs0xOB-g35JIMYYJa98SSEZgglvl4bOXrOkgktetmqM06J4XJARq-uNtgJIkBCCQrDI8j86SQ"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762215823384,
+        "gameDuration": 1236,
+        "gameMode": "SWIFTPLAY",
+        "participants": [
+            {
+                "puuid": "Pc3XVeSR58cSEO7mzKOm1arKJHQAvs9iwwU6m9ndjvjBJc--m-Hx7JO-I_GMl-T9h5ZbRxJM9dJM-Q",
+                "summonerName": "",
+                "championName": "Darius",
+                "kills": 7,
+                "deaths": 6,
+                "assists": 3,
+                "win": false
+            },
+            {
+                "puuid": "2Ph5RMPm3UCkqB5NkAiMRb7TY1ELwSkyox9gXPqb7x3ZRGh-akgTVDvHU8QyRtZ4qltmPbUNDjmHqg",
+                "summonerName": "",
+                "championName": "Belveth",
+                "kills": 3,
+                "deaths": 4,
+                "assists": 8,
+                "win": false
+            },
+            {
+                "puuid": "Ng8nrVVgtdXYpIpQ4A8G8vBM9od97Ud3fqn9H-12g_JiNN7gWUrXv_AsCOwaSaMhp2pNteu7spJRqw",
+                "summonerName": "",
+                "championName": "Tristana",
+                "kills": 3,
+                "deaths": 3,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "3EW3Kkj2FTjf8YZE5IMmM8lX_qhXrMzIrwfoZbqLQEkH9ovyFOJNMwE1POf4gYH6aqrbD_wL1_JHKA",
+                "summonerName": "",
+                "championName": "Ashe",
+                "kills": 1,
+                "deaths": 11,
+                "assists": 7,
+                "win": false
+            },
+            {
+                "puuid": "tvMRlxtxk4_sGmKr9Mb_FVhdtff6KP3pWTaFUB9w14cDQ_mPc9OnJydUxJmPkKbR3YFeUleR2Ll-dg",
+                "summonerName": "",
+                "championName": "Leona",
+                "kills": 6,
+                "deaths": 10,
+                "assists": 7,
+                "win": false
+            },
+            {
+                "puuid": "bTgtd3AFvXrT9l1st0KmEfCl50dsDraIGBlCxBstTXZtu0xEoSJgRCOfgDeOIl-1cyhf42lIk_9ELg",
+                "summonerName": "",
+                "championName": "Vayne",
+                "kills": 6,
+                "deaths": 6,
+                "assists": 5,
+                "win": true
+            },
+            {
+                "puuid": "BwvqleHRVqqS1TUOeyokQs_R4saDYKVG1nnCvYXqqHWjapY-OGLIMj4ycBr0c3yXlA3fIshHLe6yiQ",
+                "summonerName": "",
+                "championName": "MasterYi",
+                "kills": 7,
+                "deaths": 3,
+                "assists": 4,
+                "win": true
+            },
+            {
+                "puuid": "lcQHlzlZJz3rxYlmZk4bQgOejfqaip8YzIJB7rwq-ctNkGaOWBmosWvwSZ_YD63uLT7rLEsDB85sRA",
+                "summonerName": "",
+                "championName": "Ryze",
+                "kills": 0,
+                "deaths": 0,
+                "assists": 0,
+                "win": true
+            },
+            {
+                "puuid": "7Jt8gKr7pyONJONcltRzcoOSCD9afD0Ge68TVvgIx2X_ETBX_lRhgyM3yaq8fIAY4XnQzs0vKr2v9A",
+                "summonerName": "",
+                "championName": "Draven",
+                "kills": 13,
+                "deaths": 7,
+                "assists": 11,
+                "win": true
+            },
+            {
+                "puuid": "V6PHjYs0xOB-g35JIMYYJa98SSEZgglvl4bOXrOkgktetmqM06J4XJARq-uNtgJIkBCCQrDI8j86SQ",
+                "summonerName": "",
+                "championName": "Pyke",
+                "kills": 8,
+                "deaths": 4,
+                "assists": 13,
+                "win": true
+            }
+        ]
+    }
+}

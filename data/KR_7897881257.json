@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897881257",
+        "participants": [
+            "_YpPzX2BhSN4DyyDY9zvWxKm2cWeltHJTN11DHdEAKkPckH2zG4QaboTttbbgiEjrdXFMgsnJ_rwdA",
+            "Nx606XUpo9CoMic6y8n-1mYzRFCriVwIhbPUwUW7JlR8_pAU5Li5iac0cPjAZeMmhG8bXO_25N2FEA",
+            "-Ml7qlh2iUolf335DR0WjmJFqDVvQlceKgtY19ZwCiX1HP5-xUlKP7SBybKEh6sEIQ5z22ns4i55cQ",
+            "_iwBl20WGjao1lN8yB-7NN74xFBNt62qVTYhxMA6L2c4YjTGzfNT2VYHP2Y8f7fnpOy5LPel3qc-FQ",
+            "SnZ6XizlfHEA9JCK44nAKLQcDPjywPR23PxyTUahxTLP2XJMEWP2lcArCX2b_Oo09WlmqmyehPq1lw",
+            "OJclAtKQCnmedhaoyue_C2WaFwfBI-BBp035Z8v-1FQm8LGU7pXW_vruHuLlaQnixdp2SiHK0JEs2Q",
+            "CwqLqKfTwFCNbD4Kg4zkdi0patHjMC4EnhjelrJqqgiiYvuQ7rcdA5iTWyHvfw0uc-_di3V2-mC6Gw",
+            "3uqibxlcaYPtqNk08RXRlbr1HJxstwT9P7K2YPNtqxxMqb8APHLf8RMBX9acemHNPYk7NnUGWOH2Vg",
+            "ps0UORt3bTo-QwtWJj6I15jB1vp_S7h6YhAomYeCEA2-OFpzyL94iFDwKR21DznrvLSu0IPyKJOskQ",
+            "FGdS-QSUeEGue68s3GGs18YjONCxWRMw-mvv81x2IR_gBASVOrsaYDucul0yzYZ1ocKQwB55fWNZ1A"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762223676226,
+        "gameDuration": 1742,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "_YpPzX2BhSN4DyyDY9zvWxKm2cWeltHJTN11DHdEAKkPckH2zG4QaboTttbbgiEjrdXFMgsnJ_rwdA",
+                "summonerName": "",
+                "championName": "Poppy",
+                "kills": 6,
+                "deaths": 8,
+                "assists": 15,
+                "win": true
+            },
+            {
+                "puuid": "Nx606XUpo9CoMic6y8n-1mYzRFCriVwIhbPUwUW7JlR8_pAU5Li5iac0cPjAZeMmhG8bXO_25N2FEA",
+                "summonerName": "",
+                "championName": "Diana",
+                "kills": 8,
+                "deaths": 5,
+                "assists": 11,
+                "win": true
+            },
+            {
+                "puuid": "-Ml7qlh2iUolf335DR0WjmJFqDVvQlceKgtY19ZwCiX1HP5-xUlKP7SBybKEh6sEIQ5z22ns4i55cQ",
+                "summonerName": "",
+                "championName": "Orianna",
+                "kills": 6,
+                "deaths": 0,
+                "assists": 17,
+                "win": true
+            },
+            {
+                "puuid": "_iwBl20WGjao1lN8yB-7NN74xFBNt62qVTYhxMA6L2c4YjTGzfNT2VYHP2Y8f7fnpOy5LPel3qc-FQ",
+                "summonerName": "",
+                "championName": "Twitch",
+                "kills": 11,
+                "deaths": 3,
+                "assists": 7,
+                "win": true
+            },
+            {
+                "puuid": "SnZ6XizlfHEA9JCK44nAKLQcDPjywPR23PxyTUahxTLP2XJMEWP2lcArCX2b_Oo09WlmqmyehPq1lw",
+                "summonerName": "",
+                "championName": "Maokai",
+                "kills": 8,
+                "deaths": 3,
+                "assists": 23,
+                "win": true
+            },
+            {
+                "puuid": "OJclAtKQCnmedhaoyue_C2WaFwfBI-BBp035Z8v-1FQm8LGU7pXW_vruHuLlaQnixdp2SiHK0JEs2Q",
+                "summonerName": "",
+                "championName": "Nasus",
+                "kills": 4,
+                "deaths": 9,
+                "assists": 8,
+                "win": false
+            },
+            {
+                "puuid": "CwqLqKfTwFCNbD4Kg4zkdi0patHjMC4EnhjelrJqqgiiYvuQ7rcdA5iTWyHvfw0uc-_di3V2-mC6Gw",
+                "summonerName": "",
+                "championName": "Nocturne",
+                "kills": 7,
+                "deaths": 9,
+                "assists": 8,
+                "win": false
+            },
+            {
+                "puuid": "3uqibxlcaYPtqNk08RXRlbr1HJxstwT9P7K2YPNtqxxMqb8APHLf8RMBX9acemHNPYk7NnUGWOH2Vg",
+                "summonerName": "",
+                "championName": "Galio",
+                "kills": 3,
+                "deaths": 5,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "ps0UORt3bTo-QwtWJj6I15jB1vp_S7h6YhAomYeCEA2-OFpzyL94iFDwKR21DznrvLSu0IPyKJOskQ",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 2,
+                "deaths": 5,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "FGdS-QSUeEGue68s3GGs18YjONCxWRMw-mvv81x2IR_gBASVOrsaYDucul0yzYZ1ocKQwB55fWNZ1A",
+                "summonerName": "",
+                "championName": "Neeko",
+                "kills": 3,
+                "deaths": 11,
+                "assists": 6,
+                "win": false
+            }
+        ]
+    }
+}

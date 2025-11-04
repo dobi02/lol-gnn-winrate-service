@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7896918723",
+        "participants": [
+            "c9pLaYmbgjvY6mzGUlXCaUHLwusIqwbIRttHL1rBM2hWtB0JNuJ9HKEqHK9AYNANIZ5wVuEp4rsxjw",
+            "qa6-GP7YyXVVwwr-iRM_tjI0PVnz16jKsvvIZhebYe3VjTnoEO1j9ErhnJoTe7LD3K3fRm_-8vYglg",
+            "V3x9bIFerm3yMU2I7HFEe6Pjn_CZjL-MqIIIVb0zPJH1OYvQ-y0fv73sdF0N79IRaLrRqLFgwdAFwg",
+            "G6n7_CXBDYVmGeQXgTkZfIZNrt_RPI2dSwmZ9MxeTgDoWK7EiOOPf5deyD22TvQp3JTIxVfBIZOwLQ",
+            "qSmuwD2BQ81SjPVNh133KpmkvdRPKvNJn8XAOO2DtmYIit6Us4VDdOp2qhYjQ5Behgjt4aUTgX4Bfg",
+            "soQIkMN7hsPuD-gdxF0gmFEej85jwT8oyDngSzejejolpBvY_Fn7LPHeeXDt7LAG7rloS1usSrLquw",
+            "8STZN72wLPsRnlaM6we3kMEdPdOUYV3sLkKALOZuMen2m08gvrekqHrtWlce3dYFLtdd9XUziZ97QQ",
+            "iijS854-UDMq7OlMclFDHkANDXQVe3Mq5d53oiTx3dYKYX6QoOa5dERoLo6r9cjR33fsWH024So7Kw",
+            "LcjLr9EcxvJwVLbAz6rriQYCMx6Eqi-JQEElfv-D6_zjRr64fYwAezDK_1WrK8Uv3ISqxM-BozV3tQ",
+            "3yADdCpwqU8T7jTG8pQFSSSBS-fII6U_u9omDTzskk2vYOoiggpSqPRruZtewebFlDnhlb83Yo1gKg"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762158764891,
+        "gameDuration": 1038,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "c9pLaYmbgjvY6mzGUlXCaUHLwusIqwbIRttHL1rBM2hWtB0JNuJ9HKEqHK9AYNANIZ5wVuEp4rsxjw",
+                "summonerName": "",
+                "championName": "Tryndamere",
+                "kills": 2,
+                "deaths": 2,
+                "assists": 2,
+                "win": true
+            },
+            {
+                "puuid": "qa6-GP7YyXVVwwr-iRM_tjI0PVnz16jKsvvIZhebYe3VjTnoEO1j9ErhnJoTe7LD3K3fRm_-8vYglg",
+                "summonerName": "",
+                "championName": "Graves",
+                "kills": 3,
+                "deaths": 1,
+                "assists": 9,
+                "win": true
+            },
+            {
+                "puuid": "V3x9bIFerm3yMU2I7HFEe6Pjn_CZjL-MqIIIVb0zPJH1OYvQ-y0fv73sdF0N79IRaLrRqLFgwdAFwg",
+                "summonerName": "",
+                "championName": "Leblanc",
+                "kills": 6,
+                "deaths": 2,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "G6n7_CXBDYVmGeQXgTkZfIZNrt_RPI2dSwmZ9MxeTgDoWK7EiOOPf5deyD22TvQp3JTIxVfBIZOwLQ",
+                "summonerName": "",
+                "championName": "Ashe",
+                "kills": 10,
+                "deaths": 5,
+                "assists": 4,
+                "win": true
+            },
+            {
+                "puuid": "qSmuwD2BQ81SjPVNh133KpmkvdRPKvNJn8XAOO2DtmYIit6Us4VDdOp2qhYjQ5Behgjt4aUTgX4Bfg",
+                "summonerName": "",
+                "championName": "Braum",
+                "kills": 2,
+                "deaths": 4,
+                "assists": 11,
+                "win": true
+            },
+            {
+                "puuid": "soQIkMN7hsPuD-gdxF0gmFEej85jwT8oyDngSzejejolpBvY_Fn7LPHeeXDt7LAG7rloS1usSrLquw",
+                "summonerName": "",
+                "championName": "Ryze",
+                "kills": 3,
+                "deaths": 2,
+                "assists": 2,
+                "win": false
+            },
+            {
+                "puuid": "8STZN72wLPsRnlaM6we3kMEdPdOUYV3sLkKALOZuMen2m08gvrekqHrtWlce3dYFLtdd9XUziZ97QQ",
+                "summonerName": "",
+                "championName": "Yone",
+                "kills": 3,
+                "deaths": 6,
+                "assists": 6,
+                "win": false
+            },
+            {
+                "puuid": "iijS854-UDMq7OlMclFDHkANDXQVe3Mq5d53oiTx3dYKYX6QoOa5dERoLo6r9cjR33fsWH024So7Kw",
+                "summonerName": "",
+                "championName": "Zilean",
+                "kills": 1,
+                "deaths": 5,
+                "assists": 5,
+                "win": false
+            },
+            {
+                "puuid": "LcjLr9EcxvJwVLbAz6rriQYCMx6Eqi-JQEElfv-D6_zjRr64fYwAezDK_1WrK8Uv3ISqxM-BozV3tQ",
+                "summonerName": "",
+                "championName": "Ezreal",
+                "kills": 2,
+                "deaths": 4,
+                "assists": 4,
+                "win": false
+            },
+            {
+                "puuid": "3yADdCpwqU8T7jTG8pQFSSSBS-fII6U_u9omDTzskk2vYOoiggpSqPRruZtewebFlDnhlb83Yo1gKg",
+                "summonerName": "",
+                "championName": "Thresh",
+                "kills": 4,
+                "deaths": 6,
+                "assists": 4,
+                "win": false
+            }
+        ]
+    }
+}

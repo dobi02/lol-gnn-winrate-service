@@ -1,0 +1,114 @@
+{
+    "metadata": {
+        "matchId": "KR_7897362532",
+        "participants": [
+            "NVPc9K7Ww3ysGsoERnHSMCB-yw08ZgPBq-E9ks2Ix-LoqPK1F-DimdHpTp7UFQVQxt5yQGVNc7z5Xw",
+            "4mYgzFD9A3bQy0bnxIjiUOKfm45pRLwQFiw2x45J3A2jop6KaODign8Swe4vkKiSuwWv7QBo7DZ7HA",
+            "W08gwoVeL04dVrzN5fdtl7f2Bi_aubmVUlsQbY2sfwczGk-YKM0WxhC_-B_yrj3bOudaDy4KpeYxLA",
+            "NBQ9HOLe9KojlBIVdgd_yP1LAIp0YYcYAw1WLpZGrSNB1UqGVRHZbW9nrKcJZnTdNDfrWCzwE-1WdA",
+            "BW4ARm-YjZt6x2KQDzsNzCig6lz-EDyp3rq-K3w126sToRe1uNDXA9TPGe2Pr0uzqTphEpbZ4g5CjQ",
+            "QSfE7VuoZVapzWKA2m5FunfZy-0H2qNExbv9UxzM9N7n_s2ZfXCKGE9Fs7NzcHGYV48stsbyUzT6jA",
+            "a8qhv4XWLgjoMoO1ySllcubU4QwzGTafcio90WYSANKujznNz3rtnwy_Db0woo40tJ63rsL7u1PPPA",
+            "-SNbyRit9KTBKVI7L0Mq6djyvh-MBHIT-eUawmn4jAlCfDSaiKHDtuq9hQCPB47s5oLnwglfmvT4Hg",
+            "tCUtthJVNo-hqRQ6te1M4g4ylqvIarQMYnRy7jghsRr7cisWOZyMYjx5daoulBjFKYOeQvqb4WHNwA",
+            "FGXVKK73PLwRhr0DML7N3dOWOMDOyaLYgtpHU8diqYOxgIdXS5yDCPgDtrTgV1Ip51Mq-9Z8LO7qzA"
+        ]
+    },
+    "info": {
+        "gameCreation": 1762176096053,
+        "gameDuration": 1346,
+        "gameMode": "CLASSIC",
+        "participants": [
+            {
+                "puuid": "NVPc9K7Ww3ysGsoERnHSMCB-yw08ZgPBq-E9ks2Ix-LoqPK1F-DimdHpTp7UFQVQxt5yQGVNc7z5Xw",
+                "summonerName": "",
+                "championName": "Heimerdinger",
+                "kills": 2,
+                "deaths": 6,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "4mYgzFD9A3bQy0bnxIjiUOKfm45pRLwQFiw2x45J3A2jop6KaODign8Swe4vkKiSuwWv7QBo7DZ7HA",
+                "summonerName": "",
+                "championName": "Teemo",
+                "kills": 2,
+                "deaths": 5,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "W08gwoVeL04dVrzN5fdtl7f2Bi_aubmVUlsQbY2sfwczGk-YKM0WxhC_-B_yrj3bOudaDy4KpeYxLA",
+                "summonerName": "",
+                "championName": "Xerath",
+                "kills": 3,
+                "deaths": 2,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "NBQ9HOLe9KojlBIVdgd_yP1LAIp0YYcYAw1WLpZGrSNB1UqGVRHZbW9nrKcJZnTdNDfrWCzwE-1WdA",
+                "summonerName": "",
+                "championName": "Caitlyn",
+                "kills": 0,
+                "deaths": 6,
+                "assists": 1,
+                "win": false
+            },
+            {
+                "puuid": "BW4ARm-YjZt6x2KQDzsNzCig6lz-EDyp3rq-K3w126sToRe1uNDXA9TPGe2Pr0uzqTphEpbZ4g5CjQ",
+                "summonerName": "",
+                "championName": "Senna",
+                "kills": 0,
+                "deaths": 3,
+                "assists": 0,
+                "win": false
+            },
+            {
+                "puuid": "QSfE7VuoZVapzWKA2m5FunfZy-0H2qNExbv9UxzM9N7n_s2ZfXCKGE9Fs7NzcHGYV48stsbyUzT6jA",
+                "summonerName": "",
+                "championName": "Sett",
+                "kills": 7,
+                "deaths": 1,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "a8qhv4XWLgjoMoO1ySllcubU4QwzGTafcio90WYSANKujznNz3rtnwy_Db0woo40tJ63rsL7u1PPPA",
+                "summonerName": "",
+                "championName": "Briar",
+                "kills": 9,
+                "deaths": 1,
+                "assists": 2,
+                "win": true
+            },
+            {
+                "puuid": "-SNbyRit9KTBKVI7L0Mq6djyvh-MBHIT-eUawmn4jAlCfDSaiKHDtuq9hQCPB47s5oLnwglfmvT4Hg",
+                "summonerName": "",
+                "championName": "Cassiopeia",
+                "kills": 3,
+                "deaths": 2,
+                "assists": 4,
+                "win": true
+            },
+            {
+                "puuid": "tCUtthJVNo-hqRQ6te1M4g4ylqvIarQMYnRy7jghsRr7cisWOZyMYjx5daoulBjFKYOeQvqb4WHNwA",
+                "summonerName": "",
+                "championName": "Ashe",
+                "kills": 3,
+                "deaths": 1,
+                "assists": 3,
+                "win": true
+            },
+            {
+                "puuid": "FGXVKK73PLwRhr0DML7N3dOWOMDOyaLYgtpHU8diqYOxgIdXS5yDCPgDtrTgV1Ip51Mq-9Z8LO7qzA",
+                "summonerName": "",
+                "championName": "Soraka",
+                "kills": 0,
+                "deaths": 2,
+                "assists": 7,
+                "win": true
+            }
+        ]
+    }
+}
