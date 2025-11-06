@@ -1,0 +1,17 @@
+FROM jupyter/datascience-notebook:x86_64-ubuntu-22.04
+
+# SSH settings
+USER root
+RUN apt-get update && apt-get install -y openssh-server sudo git \
+    && rm -rf /var/lib/apt/lists/*
+COPY ssh_keys/ds_authorized_keys /home/jovyan/.ssh/authorized_keys
+RUN chmod 600 /home/jovyan/.ssh/authorized_keys
+RUN chown -R jovyan:users /home/jovyan/.ssh
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+RUN sed -i 's/ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+
+USER jovyan
+WORKDIR /home/jovyan/work
+# # Install python requirements
+# COPY requirements.ds.txt .
+# RUN pip install --no-cache-dir -r requirements.ds.txt
