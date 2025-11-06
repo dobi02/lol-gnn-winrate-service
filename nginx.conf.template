@@ -1,0 +1,54 @@
+worker_processes 1;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    # 도커 내부 DNS (127.0.0.11)
+    resolver 127.0.0.11 valid=30s;
+
+    server {
+        listen 80;
+        server_name jupyter.${MY_DOMAIN};
+
+        location / {
+            proxy_pass http://ds-environment:8888;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            
+            # WebSocket 지원
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }
+
+    server {
+        listen 80;
+        server_name airflow.${MY_DOMAIN};
+
+        location / {
+            proxy_pass http://airflow-apiserver:8080;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            
+            # Airflow가 올바르게 리디렉션되도록 설정
+            proxy_redirect off;
+        }
+    }
+
+    server {
+        listen 80;
+        server_name minio.${MY_DOMAIN};
+
+        location / {
+            proxy_pass http://minio:9001;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+}

@@ -1,0 +1,4 @@
+.env
+airflow/
+ds_env/
+minio/
