@@ -74,8 +74,8 @@ services:
   airflow-apiserver:
     <<: *airflow-common
     command: api-server
-    # ports:
-      # - "8080:8080"
+    ports:
+      - "8080:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/api/v2/version"]
       interval: 30s
@@ -309,9 +309,9 @@ services:
       - MINIO_ROOT_PASSWORD=minioadmin
     volumes:
       - ./minio/data:/data
-    # ports:  
+    ports:  
       # - "9000:9000" # S3 API 포트
-      # - "9001:9001" # 웹 콘솔 포트
+      - "9001:9001" # 웹 콘솔 포트
     healthcheck:
       # test:
       interval: 5s
@@ -346,8 +346,8 @@ services:
   ds-environment:
     image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
     container_name: ds_environment
-    # ports:
-      # - "8888:8888"
+    ports:
+      - "8888:8888"
     volumes:
       - ./ds_env/notebooks:/home/jovyan/work
     environment:
@@ -368,7 +368,11 @@ services:
       - "80:80"
       # - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+    environment:
+      - MY_DOMAIN=${MY_DOMAIN}
+    command: >
+      /bin/sh -c "envsubst '\$$MY_DOMAIN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     networks:
       - data-platform-net
     restart: unless-stopped
