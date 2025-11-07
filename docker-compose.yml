@@ -33,7 +33,7 @@ x-airflow-common:
 
 services:
   # ----------------------------------------------------
-  # 1. PostgreSQL (Airflow 메타데이터 DB)
+  # PostgreSQL (Airflow 메타데이터 DB)
   # ----------------------------------------------------
   postgres:
     image: postgres:16
@@ -53,7 +53,7 @@ services:
       - data-platform-net
 
   # ----------------------------------------------------
-  # 2. Redis (Airflow 스케줄러용)
+  # Redis (Airflow 스케줄러용)
   # ----------------------------------------------------
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -69,7 +69,7 @@ services:
       - data-platform-net
 
   # ----------------------------------------------------
-  # 3. Airflow Apiserver
+  # Airflow Apiserver
   # ----------------------------------------------------
   airflow-apiserver:
     <<: *airflow-common
@@ -91,7 +91,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 4. Airflow Scheduler
+  # Airflow Scheduler
   # ----------------------------------------------------
   airflow-scheduler:
     <<: *airflow-common
@@ -111,7 +111,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 5. Airflow Worker
+  # Airflow Worker
   # ----------------------------------------------------
   airflow-worker:
     <<: *airflow-common
@@ -141,7 +141,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 5. Airflow DAG Processor
+  # Airflow DAG Processor
   # ----------------------------------------------------
   airflow-dag-processor:
     <<: *airflow-common
@@ -161,7 +161,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 5. Airflow Triggerer
+  # Airflow Triggerer
   # ----------------------------------------------------
   airflow-triggerer:
     <<: *airflow-common
@@ -181,7 +181,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 5. Airflow Init
+  # Airflow Init
   # ----------------------------------------------------
   airflow-init:
     <<: *airflow-common
@@ -278,7 +278,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 5. Airflow CLI
+  # Airflow CLI
   # ----------------------------------------------------
   airflow-cli:
     <<: *airflow-common
@@ -298,7 +298,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 6. MinIO (데이터 레이크)
+  # MinIO (데이터 레이크)
   # ----------------------------------------------------
   minio:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
@@ -321,7 +321,7 @@ services:
       - data-platform-net
 
   # ----------------------------------------------------
-  # 7. 데이터 엔지니어(DE) 환경
+  # 데이터 엔지니어(DE) 환경
   # ----------------------------------------------------
   de-environment:
     build:
@@ -329,16 +329,19 @@ services:
       dockerfile: Dockerfile.de
     container_name: de_environment
     ports:
-      - "2222:22"
+      - "2222:22" 
     volumes:
       - ./airflow/dags:/home/de_user/dags
+      - ./airflow/plugins:/home/de_user/plugins
+    environment:
+          - PYTHONPATH=/home/de_user/plugins
     networks:
       - data-platform-net
     stdin_open: true
     tty: true
 
   # ----------------------------------------------------
-  # 8. 데이터 사이언티스트(DS) 환경
+  # 데이터 사이언티스트(DS) 환경
   # ----------------------------------------------------
   ds-environment:
     image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
@@ -356,7 +359,7 @@ services:
     stdin_open: true
     tty: true
   # ----------------------------------------------------
-  # 9. [신규] Nginx 리버스 프록시
+  # Nginx 리버스 프록시
   # ----------------------------------------------------
   nginx:
     image: nginx:trixie-perl
