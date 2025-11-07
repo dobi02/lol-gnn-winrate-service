@@ -71,7 +71,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 4. Airflow Scheduler
+  # Airflow Scheduler
   # ----------------------------------------------------
   airflow-scheduler:
     <<: *airflow-common
@@ -250,6 +250,27 @@ services:
     networks:
       - data-platform-net
 
+  # ----------------------------------------------------
+  # Git-Sync(DAG 배포용)
+  # ----------------------------------------------------
+  git-sync:
+    image: registry.k8s.io/git-sync/git-sync:v4.5.0
+    user: "0"
+    volumes:
+          - ./airflow/dags:/home
+    environment:
+      - GITSYNC_REPO=https://github.com/dobi02/lol-gnn-winrate-service.git
+      - GITSYNC_BRANCH=exmaple/dags
+      - GIT_SYNC_BRANCH=example/dags
+      - GITSYNC_WAIT=60
+      - GITSYNC_ONE_TIME=false
+      - GITSYNC_ROOT=/home
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo ".worktrees" > /home/.airflowignore && /git-sync
+      # - GITSYNC_DEST=./app
   # ----------------------------------------------------
   # 데이터 엔지니어(DE) 환경
   # ----------------------------------------------------
