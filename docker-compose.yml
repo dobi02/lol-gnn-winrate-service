@@ -253,43 +253,46 @@ services:
   # ----------------------------------------------------
   # Git-Sync(DAG 배포용)
   # ----------------------------------------------------
-  # git-sync:
-  #   image: registry.k8s.io/git-sync/git-sync:v4.5.0
-  #   user: "0"
-  #   volumes:
-  #         - ./airflow/dags:/git
-  #   environment:
-  #     GITSYNC_REPO: https://github.com/dobi02/lol-gnn-winrate-service.git
-  #     GIT_SYNC_BRANCH: example/dags
-  #     GITSYNC_PERIOD: 30s
-  #     # GITSYNC_ONE_TIME: 'false'
-  #     GITSYNC_ROOT: /git
-  #     GITSYNC_LINK: repo/dags
-  #   # entrypoint:
-  #   #   - /bin/sh
-  #   #   - -c
-  #   #   - |
-  #   #     echo ".worktrees" > /home/.airflowignore && /git-sync
+  git-sync:
+    image: registry.k8s.io/git-sync/git-sync:v4.5.0
+    user: "${AIRFLOW_UID}:${AIRFLOW_GID}"
+    volumes:
+          - ./airflow/dags:/dags
+    environment:
+      GITSYNC_REPO: https://github.com/dobi02/lol-gnn-winrate-service.git
+      GIT_SYNC_BRANCH: example/dags
+      GITSYNC_PERIOD: 60s
+      # GITSYNC_ONE_TIME: 'false'
+      GITSYNC_ROOT: /dags/git
+      GITSYNC_LINK: repo
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo ".worktrees" > /dags/.airflowignore &&/git-sync
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
 
   # ----------------------------------------------------
   # 데이터 엔지니어(DE) 환경
   # ----------------------------------------------------
-  de-environment:
-    build:
-      context: .
-      dockerfile: Dockerfile.de
-    container_name: de_environment
-    ports:
-      - "2222:22" 
-    volumes:
-      - ./airflow/dags:/home/de_user/dags
-      - ./airflow/plugins:/home/de_user/plugins
-    environment:
-          - PYTHONPATH=/home/de_user/plugins
-    networks:
-      - data-platform-net
-    stdin_open: true
-    tty: true
+  # de-environment:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.de
+  #   container_name: de_environment
+  #   ports:
+  #     - "2222:22" 
+  #   volumes:
+  #     - ./airflow/dags:/home/de_user/dags
+  #     - ./airflow/plugins:/home/de_user/plugins
+  #   environment:
+  #         - PYTHONPATH=/home/de_user/plugins
+  #   networks:
+  #     - data-platform-net
+  #   stdin_open: true
+  #   tty: true
 
   # ----------------------------------------------------
   # 데이터 사이언티스트(DS) 환경
