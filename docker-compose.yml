@@ -288,7 +288,7 @@ services:
     volumes:
       - data-postgres-volume:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
+      test: ["CMD", "pg_isready", "-U", "${DATA_POSTGRES_USER}"]
       interval: 10s
       retries: 5
       start_period: 5s
