@@ -1,2 +1,10 @@
-# lol-gnn-winrate-service
-End-to-end MLOps pipeline for GNN-based win rate prediction in League of Legends (Riot API ingestion, graph build, PyG training, CI/CD, FastAPI service, monitoring).
+## 롤 인게임 내/외 데이터 수집
+### 인게임 외 데이터
+* 기본 데이터
+  * 챔피언, 게임 시간, 승패, 킬/데스/어시스트, 골드/cs/xp 획득량, 가한/받은 피해량 등
+* 확장 데이터
+  * KDA, 분당 지표, 게임 시작 후 15분까지의 지표 등
+ 
+### 인게임 내 데이터
+* 코드 구성 중(미완성)
+* 수집해야할 이벤트: 킬 로그, 오브젝트 로그, 스펠/아이템 사용 로그 등
