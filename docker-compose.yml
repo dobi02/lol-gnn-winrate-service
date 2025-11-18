@@ -18,6 +18,7 @@ x-airflow-common:
     AIRFLOW__API_AUTH__JWT_SECRET: '${AIRFLOW_JWT_SECRET}'
     AIRFLOW_CONN_MINIO_DEFAULT: aws://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@?endpoint_url=http%3A%2F%2Fminio%3A9000
     AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/data_db
+    AIRFLOW__DAG_PROCESSOR__MIN_FILE_PROCESS_INTERVAL: '30'
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
