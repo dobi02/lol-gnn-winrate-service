@@ -1,4 +1,5 @@
 .env
+.idea
 airflow/
 ds_env/
 minio/
