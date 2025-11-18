@@ -9,14 +9,15 @@ x-airflow-common:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/airflow
+    # AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-apiserver:8080/execution/
-    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__FERNET_KEY: '${AIRFLOW_FERNET_KEY}'
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-    AIRFLOW__API_AUTH__JWT_SECRET: 'randomgStrongString=='
-    AIRFLOW_CONN_MINIO_DEFAULT: aws://minioadmin:minioadmin@?endpoint_url=http%3A%2F%2Fminio%3A9000
+    AIRFLOW__API_AUTH__JWT_SECRET: '${AIRFLOW_JWT_SECRET}'
+    AIRFLOW_CONN_MINIO_DEFAULT: aws://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@?endpoint_url=http%3A%2F%2Fminio%3A9000
+    AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/data_db
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
@@ -34,8 +35,8 @@ services:
   postgres:
     image: postgres:16
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
@@ -71,7 +72,7 @@ services:
     - data-platform-net
 
   # ----------------------------------------------------
-  # 4. Airflow Scheduler
+  # Airflow Scheduler
   # ----------------------------------------------------
   airflow-scheduler:
     <<: *airflow-common
@@ -235,8 +236,8 @@ services:
     container_name: minio_data_lake
     command: server /data --console-address ":9001"
     environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     volumes:
       - ./minio/data:/data
     ports:  
@@ -251,24 +252,68 @@ services:
       - data-platform-net
 
   # ----------------------------------------------------
-  # 데이터 엔지니어(DE) 환경
+  # Git-Sync(DAG 배포용)
   # ----------------------------------------------------
-  de-environment:
-    build:
-      context: .
-      dockerfile: Dockerfile.de
-    container_name: de_environment
-    ports:
-      - "2222:22" 
+  git-sync:
+    image: registry.k8s.io/git-sync/git-sync:v4.5.0
+    user: "${AIRFLOW_UID}:0"
     volumes:
-      - ./airflow/dags:/home/de_user/dags
-      - ./airflow/plugins:/home/de_user/plugins
+          - ./airflow/dags:/dags
     environment:
-          - PYTHONPATH=/home/de_user/plugins
+      GITSYNC_REPO: https://github.com/dobi02/lol-gnn-winrate-service.git
+      GIT_SYNC_BRANCH: example/dags
+      GITSYNC_PERIOD: 60s
+      # GITSYNC_ONE_TIME: 'false'
+      GITSYNC_ROOT: /dags/git
+      GITSYNC_LINK: repo
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo ".worktrees" > /dags/.airflowignore &&/git-sync
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # ----------------------------------------------------
+  # PostgreSQL (범용 데이터 DB)
+  # ----------------------------------------------------
+  data-postgres:
+    image: postgres:16
+    container_name: data_postgres_db
+    environment:
+      POSTGRES_USER: ${DATA_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DATA_POSTGRES_PASSWORD}
+      POSTGRES_DB: data_db
+    volumes:
+      - data-postgres-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DATA_POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
     networks:
       - data-platform-net
-    stdin_open: true
-    tty: true
+  # ----------------------------------------------------
+  # 데이터 엔지니어(DE) 환경
+  # ----------------------------------------------------
+  # de-environment:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.de
+  #   container_name: de_environment
+  #   ports:
+  #     - "2222:22" 
+  #   volumes:
+  #     - ./airflow/dags:/home/de_user/dags
+  #     - ./airflow/plugins:/home/de_user/plugins
+  #   environment:
+  #         - PYTHONPATH=/home/de_user/plugins
+  #   networks:
+  #     - data-platform-net
+  #   stdin_open: true
+  #   tty: true
 
   # ----------------------------------------------------
   # 데이터 사이언티스트(DS) 환경
@@ -281,9 +326,9 @@ services:
     volumes:
       - ./ds_env/notebooks:/home/jovyan/work
     environment:
-      JUPYTER_TOKEN: your_secret_token
+      JUPYTER_TOKEN: ${JUPYTER_TOKEN}
       JUPYTER_ENABLE_LAB: yes
-      GRANT_SUDO: yes
+      # GRANT_SUDO: yes
     networks:
       - data-platform-net
     stdin_open: true
@@ -315,6 +360,7 @@ services:
 # ----------------------------------------------------
 volumes:
   postgres-db-volume:
+  data-postgres-volume:
 
 networks:
   data-platform-net:

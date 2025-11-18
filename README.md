@@ -1,8 +1,16 @@
 # Data Science Platform using Docker
 
-This project sets up a complete data science platform using Docker Compose, including environments for Data Engineering and Data Science, a data lake, and a workflow orchestrator.
+This project uses Docker Compose to set up a comprehensive data science platform, including Apache Airflow for workflow orchestration, MinIO as a data lake, JupyterLab for data science, and PostgreSQL databases for metadata and data storage.
+
+Access to all services is managed by an Nginx reverse proxy.
 
 ## How to Run
+
+Before starting, you must create a `.env` file by copying the example:
+
+```bash
+cp .env.example .env
+```
 
 To start all the services in the background, run the following command from the root of the project:
 
@@ -18,89 +26,67 @@ docker-compose down
 
 ## Service Access Guide
 
-Here is a list of the services and how to access them:
+Here is a list of the services and how to access them in local:
 
-| Service              | URL / Command                             | Credentials          |
+| Service              | URL / Command                             | Default Credentials          |
 | -------------------- | ----------------------------------------- | -------------------- |
 | **Airflow UI**       | `http://localhost:8080`                   | `airflow` / `airflow`|
 | **MinIO Console**    | `http://localhost:9001`                   | `minioadmin` / `minioadmin` |
 | **JupyterLab**       | `http://localhost:8888`                   | `your_secret_token`  |
-| **Data Engineer SSH**| `ssh de_user@localhost -p 2222`           | (SSH Key)            |
-| **~~Data Scientist SSH~~**| `ssh jovyan@localhost -p 2223`            | (SSH Key)            |
+| ~~**Data Engineer SSH**~~| `ssh de_user@localhost -p 2222`           | (SSH Key)            |
+
+or if you have domain, you can access them:
+
+| Service              | URL / Command                             | Default Credentials          |
+| -------------------- | ----------------------------------------- | -------------------- |
+| **Airflow UI**       | `http://airflow.example.com`                   | `airflow` / `airflow`|
+| **MinIO Console**    | `http://minio.example.com`                   | `minioadmin` / `minioadmin` |
+| **JupyterLab**       | `http://jupyter.example.com`                   | `your_secret_token`  |
 
 ---
 
-## Data Engineer Guide
+## Data Engineer Guide: Airflow DAG Deployment
+DAGs are not deployed manually. Instead, the git-sync service automatically monitors and pulls DAG 
 
-### 1. Connecting to the Environment
+files from a specific Git repository.
+- Repository: `https://github.com/dobi02/lol-gnn-winrate-service.git`
+- Branch: `example/dags`
+- Sync Interval: 60 seconds (by default)
 
-You can access the Data Engineer container via SSH. This environment is designed for developing and managing data pipelines.
-
--   **Port**: `2222`
--   **Username**: `de_user`
-
-**Command:**
-```bash
-ssh de_user@localhost -p 2222
-```
-*Note: You will need to add your SSH public key to `ssh_keys/de_authorized_keys`.*
-
-### 2. Deploying Airflow DAGs
-
-The Data Engineer environment has its `/home/de_user/dags` directory mounted to the local `./airflow/dags` folder. This local folder is then directly mounted into the Airflow scheduler, webserver, and other components. This setup allows Data Engineers to develop and deploy DAGs directly within their isolated environment.
-
-Simply create or modify your DAG Python files in `/home/de_user/dags` within your Data Engineer container (or by modifying the local `./airflow/dags` folder), and Airflow will automatically detect and deploy them.
-
-1.  Access your Data Engineer environment via SSH.
-2.  Create a new DAG file (e.g., `my_new_dag.py`) in the `/home/de_user/dags` directory inside your container.
-3.  Airflow will automatically detect the new file and add it to its DAG list.
-4.  You can view and manage the DAG from the **Airflow UI** at `http://localhost:8080`.
+To deploy or update a DAG:
+1. Create or modify your `DAG.py` file.
+2. Commit and push your changes to the `example/dags` branch of the repository above.
+3. The git-sync service will automatically pull the changes into Airflow.
+4. You can monitor the new DAGs in the Airflow UI.
 
 ---
 
 ## Data Scientist Guide
+### Accessing JupyterLab
+You can access the JupyterLab environment at http://localhost:8888 (or http://jupyter.${MY_DOMAIN}). You will need the JUPYTER_TOKEN set in your .env file to log in.
 
-### ~~1. Connecting to the Environment~~
+The local directory ./ds_env/notebooks is mounted into the container at /home/jovyan/work. Any notebooks you create here will persist on your host machine.
 
-~~You can access the Data Scientist container, which comes with JupyterLab and common data science libraries, via SSH.~~
+### Accessing the Data Lake (MinIO)
+From within your Jupyter notebook, you can interact with the MinIO data lake. The MinIO service is available at the internal Docker network address `http://minio:9000`.
 
--   **Port**: `2223`
--   **Username**: `jovyan`
-
-**Command:**
-```bash
-ssh jovyan@localhost -p 2223
-```
-*Note: You will need to add your SSH public key to `ssh_keys/ds_authorized_keys`.*
-
-### 2. Accessing JupyterLab
-
-JupyterLab is running and can be accessed directly in your browser. The local `./ds_env/notebooks` directory is mounted as the workspace.
-
--   **URL**: `http://localhost:8888`
--   **Token**: `your_secret_token` (as defined in `docker-compose.yml`)
-
-### 3. Accessing Data from the Data Lake (MinIO)
-
-You can interact with the MinIO data lake using the `boto3` library in your Python scripts or notebooks. The MinIO service is available to the Data Scientist container at the address `http://minio:9000`.
-
-Here is a sample Python snippet to connect to MinIO and list the available buckets:
-
+Here is a sample Python snippet to connect to MinIO and list buckets:
 ```python
 import boto3
 from botocore.client import Config
 
-# MinIO connection details
+# MinIO connection details (from within the Docker network)
+# Use the credentials you set in your .env file
 MINIO_ENDPOINT = 'minio:9000'
-MINIO_ACCESS_KEY = 'minioadmin'
-MINIO_SECRET_KEY = 'minioadmin'
+MINIO_ACCESS_KEY = 'minioadmin'  # Your .env MINIO_ROOT_USER
+MINIO_SECRET_KEY = 'minioadmin'  # Your .env MINIO_ROOT_PASSWORD
 
 # Initialize S3 client for MinIO
 s3_client = boto3.client(
     's3',
     endpoint_url=f'http://{MINIO_ENDPOINT}',
     aws_access_key_id=MINIO_ACCESS_KEY,
-    aws_secret_access_key=MINIO_SECRET_KEY,
+    aws_secret_key_MINIO_SECRET_KEY,
     config=Config(signature_version='s3v4')
 )
 
@@ -113,7 +99,7 @@ try:
 except Exception as e:
     print(f"Error connecting to MinIO: {e}")
 
-# --- Example: Download a file from a bucket ---
+# --- Example: Download a file ---
 # try:
 #     bucket_name = 'your-bucket-name'
 #     object_name = 'path/to/your/file.csv'
@@ -124,5 +110,4 @@ except Exception as e:
 #
 # except Exception as e:
 #     print(f"Error downloading file: {e}")
-
 ```
