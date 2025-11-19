@@ -270,7 +270,7 @@ services:
     volumes:
       - ./minio/data:/data
     ports:  
-#      - "9000:9000" # S3 API 포트
+      - "9000:9000" # S3 API 포트
       - "9001:9001" # 웹 콘솔 포트
     healthcheck:
       test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
@@ -469,25 +469,25 @@ services:
   # ----------------------------------------------------
   # Nginx 리버스 프록시
   # ----------------------------------------------------
-  nginx:
-    image: nginx:trixie-perl
-    container_name: reverse_proxy
-    ports:
-      - "80:80"
-      # - "443:443"
-    volumes:
-      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-    environment:
-      - MY_DOMAIN=${MY_DOMAIN}
-    command: >
-      /bin/sh -c "envsubst '\$$MY_DOMAIN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
-    networks:
-      - data-platform-net
-    restart: unless-stopped
-    depends_on:
-      - airflow-apiserver
-      - ds-environment
-      - minio
+#  nginx:
+#    image: nginx:trixie-perl
+#    container_name: reverse_proxy
+#    ports:
+#      - "80:80"
+#      # - "443:443"
+#    volumes:
+#      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+#    environment:
+#      - MY_DOMAIN=${MY_DOMAIN}
+#    command: >
+#      /bin/sh -c "envsubst '\$$MY_DOMAIN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+#    networks:
+#      - data-platform-net
+#    restart: unless-stopped
+#    depends_on:
+#      - airflow-apiserver
+#      - ds-environment
+#      - minio
 # ----------------------------------------------------
 # 최상위 볼륨 및 네트워크 정의
 # ----------------------------------------------------
