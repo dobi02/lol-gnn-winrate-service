@@ -31,6 +31,34 @@ x-airflow-common:
 
 services:
   # ----------------------------------------------------
+  # Fix-permissions (마운트 폴더 권한 변경)
+  # ----------------------------------------------------
+  fix-perms:
+    image: alpine:latest
+    container_name: fix_perms
+    user: "0:0"
+    volumes:
+      - ./airflow:/mnt/airflow
+      - ./ds_env:/mnt/ds_env
+      - ./minio/data:/mnt/minio
+    command: >
+      sh -c "
+      echo 'Starting permission fix...' &&
+      echo 'Fixing Airflow...' &&
+      chown -R ${AIRFLOW_UID}:0 /mnt/airflow &&
+      chmod -R 775 /mnt/airflow &&
+      echo 'Fixing Jupyter...' &&
+      chown -R 1000:0 /mnt/ds_env &&
+      chmod -R 775 /mnt/ds_env &&
+      echo 'Fixing MinIO...' &&
+      chown -R 1000:0 /mnt/minio &&
+      chmod -R 775 /mnt/minio &&
+
+      echo 'All permissions fixed! Exiting.'
+      "
+    networks:
+      - data-platform-net
+  # ----------------------------------------------------
   # PostgreSQL (Airflow 메타데이터 DB)
   # ----------------------------------------------------
   postgres:
@@ -233,7 +261,7 @@ services:
   # MinIO (데이터 레이크)
   # ----------------------------------------------------
   minio:
-    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: minio_data_lake
     command: server /data --console-address ":9001"
     environment:
@@ -242,13 +270,51 @@ services:
     volumes:
       - ./minio/data:/data
     ports:  
-      # - "9000:9000" # S3 API 포트
+#      - "9000:9000" # S3 API 포트
       - "9001:9001" # 웹 콘솔 포트
     healthcheck:
-      # test:
+      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - data-platform-net
+  # ----------------------------------------------------
+  # MinIO Init (버킷 자동 생성 - IaC)
+  # ----------------------------------------------------
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+    container_name: minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Init script started..."
+        
+        # 1. MinIO 서버 연결 시도 (성공할 때까지 반복)
+        until /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
+          echo "...waiting for MinIO connection..."
+          sleep 1
+        done
+        
+        echo "Alias set successfully."
+
+        # 2. 버킷 생성 시도 (에러 발생 시 로그 출력)
+        if /usr/bin/mc mb --ignore-existing myminio/mlflow; then
+          echo "---------------------------------------------------"
+          echo "SUCCESS: MinIO bucket 'mlflow' created successfully."
+          echo "---------------------------------------------------"
+        else
+          echo "---------------------------------------------------"
+          echo "ERROR: Failed to create bucket! Check logs above."
+          echo "---------------------------------------------------"
+          exit 1
+        fi
+        
+        exit 0
     networks:
       - data-platform-net
 
@@ -297,12 +363,78 @@ services:
     networks:
       - data-platform-net
   # ----------------------------------------------------
+  # DB Init (MLflow DB 자동 생성)
+  # ----------------------------------------------------
+  db-init:
+    image: postgres:16
+    container_name: db_init
+    depends_on:
+      data-postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${DATA_POSTGRES_PASSWORD}
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for data-postgres..."
+        # DB가 준비될 때까지 대기
+        until pg_isready -h data-postgres -U ${DATA_POSTGRES_USER}; do
+          echo "..."
+          sleep 2
+        done
+
+        echo "Creating mlflow_db database..."
+        # DB 존재 여부 확인 후 없으면 생성 (멱등성 보장)
+        psql -h data-postgres -U ${DATA_POSTGRES_USER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'mlflow_db'" | grep -q 1 || \
+        psql -h data-postgres -U ${DATA_POSTGRES_USER} -d postgres -c "CREATE DATABASE mlflow_db"
+
+        echo "Database 'mlflow_db' check/creation complete."
+        exit 0
+    networks:
+      - data-platform-net
+
+  # ----------------------------------------------------
+  # MLflow Server (Model Registry & Tracking)
+  # ----------------------------------------------------
+  mlflow-server:
+    build:
+      context: .
+      dockerfile: mlflow.Dockerfile
+    container_name: mlflow_server
+    ports:
+      - "5000:5000"
+    environment:
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_S3_IGNORE_TLS=true
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - AWS_DEFAULT_REGION=us-east-1
+      - MLFLOW_SERVER_ALLOWED_HOSTS=*
+      - MLFLOW_SERVER_CORS_ALLOWED_ORIGINS=*
+    command: >
+      mlflow server
+      --backend-store-uri postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/mlflow_db
+      --default-artifact-root s3://mlflow/
+      --host 0.0.0.0
+      --port 5000
+    depends_on:
+      data-postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+      db-init:
+        condition: service_completed_successfully
+    networks:
+      - data-platform-net
+    restart: always
+  # ----------------------------------------------------
   # 데이터 엔지니어(DE) 환경
   # ----------------------------------------------------
   # de-environment:
   #   build:
   #     context: .
-  #     dockerfile: Dockerfile.de
+  #     dockerfile: mlflow.de.Dockerfile
   #   container_name: de_environment
   #   ports:
   #     - "2222:22" 
@@ -320,7 +452,7 @@ services:
   # 데이터 사이언티스트(DS) 환경
   # ----------------------------------------------------
   ds-environment:
-    image: jupyter/datascience-notebook:x86_64-ubuntu-22.04
+    image: quay.io/jupyter/datascience-notebook:ubuntu-24.04
     container_name: ds_environment
     ports:
       - "8888:8888"
