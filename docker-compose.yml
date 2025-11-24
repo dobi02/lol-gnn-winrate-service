@@ -35,7 +35,6 @@ services:
   # ----------------------------------------------------
   fix-perms:
     image: alpine:latest
-    container_name: fix_perms
     user: "0:0"
     volumes:
       - ./airflow:/mnt/airflow
@@ -84,8 +83,8 @@ services:
   airflow-apiserver:
     <<: *airflow-common
     command: api-server
-    ports:
-      - "8080:8080"
+    #ports:
+    #  - "8080:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/api/v2/version"]
       interval: 30s
@@ -99,6 +98,7 @@ services:
         condition: service_completed_successfully
     networks:
     - data-platform-net
+    - proxy-net
 
   # ----------------------------------------------------
   # Airflow Scheduler
@@ -252,7 +252,7 @@ services:
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
-      _PIP_ADDITIONAL_REQUIREMENTS: ''
+      _PIP_ADDITIONAL_REQUIREMENTS: apache-airflow-providers-fab
     user: "0:0"
     networks:
     - data-platform-net
@@ -262,16 +262,15 @@ services:
   # ----------------------------------------------------
   minio:
     image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
-    container_name: minio_data_lake
     command: server /data --console-address ":9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     volumes:
       - ./minio/data:/data
-    ports:  
-      - "9000:9000" # S3 API 포트
-      - "9001:9001" # 웹 콘솔 포트
+    #ports:
+    #  - "9000:9000" # S3 API 포트
+    #  - "9001:9001" # 웹 콘솔 포트
     healthcheck:
       test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
       interval: 5s
@@ -279,12 +278,12 @@ services:
       retries: 5
     networks:
       - data-platform-net
+      - proxy-net
   # ----------------------------------------------------
   # MinIO Init (버킷 자동 생성 - IaC)
   # ----------------------------------------------------
   minio-init:
     image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
-    container_name: minio_init
     depends_on:
       minio:
         condition: service_healthy
@@ -347,7 +346,6 @@ services:
   # ----------------------------------------------------
   data-postgres:
     image: postgres:16
-    container_name: data_postgres_db
     environment:
       POSTGRES_USER: ${DATA_POSTGRES_USER}
       POSTGRES_PASSWORD: ${DATA_POSTGRES_PASSWORD}
@@ -367,7 +365,6 @@ services:
   # ----------------------------------------------------
   db-init:
     image: postgres:16
-    container_name: db_init
     depends_on:
       data-postgres:
         condition: service_healthy
@@ -401,9 +398,10 @@ services:
     build:
       context: .
       dockerfile: dockerfile/mlflow.Dockerfile
-    container_name: mlflow_server
-    ports:
-      - "5000:5000"
+    #ports:
+    #  - "5000:5000"
+    expose:
+      - 5000
     environment:
       - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
       - MLFLOW_S3_IGNORE_TLS=true
@@ -412,6 +410,8 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - MLFLOW_SERVER_ALLOWED_HOSTS=*
       - MLFLOW_SERVER_CORS_ALLOWED_ORIGINS=*
+      - MINIO_BROWSER_REDIRECT_URL=https://minio.hyu.life
+      - MINIO_SERVER_URL=https://s3.hyu.life
     command: >
       mlflow server
       --backend-store-uri postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/mlflow_db
@@ -427,51 +427,60 @@ services:
         condition: service_completed_successfully
     networks:
       - data-platform-net
+      - proxy-net
     restart: always
-  # ----------------------------------------------------
-  # 데이터 엔지니어(DE) 환경
-  # ----------------------------------------------------
-  # de-environment:
-  #   build:
-  #     context: .
-  #     dockerfile: mlflow.de.Dockerfile
-  #   container_name: de_environment
-  #   ports:
-  #     - "2222:22" 
-  #   volumes:
-  #     - ./airflow/dags:/home/de_user/dags
-  #     - ./airflow/plugins:/home/de_user/plugins
-  #   environment:
-  #         - PYTHONPATH=/home/de_user/plugins
-  #   networks:
-  #     - data-platform-net
-  #   stdin_open: true
-  #   tty: true
 
   # ----------------------------------------------------
-  # 데이터 사이언티스트(DS) 환경
+  # jupyter
   # ----------------------------------------------------
-  ds-environment:
-    image: quay.io/jupyter/datascience-notebook:ubuntu-24.04
-    container_name: ds_environment
-    ports:
-      - "8888:8888"
-    volumes:
-      - ./ds_env/notebooks:/home/jovyan/work
+  jupyter:
+    build:
+      context: .
+      dockerfile: dockerfile/jupyter.Dockerfile
+    #ports:
+    #  - "8888:8888"
+    expose:
+      - 8888
     environment:
-      JUPYTER_TOKEN: ${JUPYTER_TOKEN}
-      JUPYTER_ENABLE_LAB: yes
-      # GRANT_SUDO: yes
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - DB_HOST=data-postgres
+      - DB_PORT=5432
+      - DB_USER=${DATA_POSTGRES_USER}
+      - DB_PASS=${DATA_POSTGRES_PASSWORD}
+      - DB_NAME=data_db
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      # 편의 설정
+      - JUPYTER_ENABLE_LAB=yes
+      - RESTARTABLE=yes
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    depends_on:
+      - data-postgres
+      - minio
+      - mlflow-server
+    shm_size: '4gb'
+    deploy:
+      resources:
+        limits:
+          cpus: '6.0'
+          memory: 16G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     networks:
-      - data-platform-net
-    stdin_open: true
-    tty: true
+        - data-platform-net
+        - proxy-net
+    restart: always
   # ----------------------------------------------------
   # Nginx 리버스 프록시
   # ----------------------------------------------------
 #  nginx:
 #    image: nginx:trixie-perl
-#    container_name: reverse_proxy
 #    ports:
 #      - "80:80"
 #      # - "443:443"
@@ -498,3 +507,5 @@ volumes:
 networks:
   data-platform-net:
     driver: bridge
+  proxy-net:
+    external: true
