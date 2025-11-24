@@ -400,7 +400,7 @@ services:
   mlflow-server:
     build:
       context: .
-      dockerfile: mlflow.Dockerfile
+      dockerfile: dockerfile/mlflow.Dockerfile
     container_name: mlflow_server
     ports:
       - "5000:5000"
