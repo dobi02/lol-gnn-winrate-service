@@ -16,8 +16,8 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API_AUTH__JWT_SECRET: '${AIRFLOW_JWT_SECRET}'
-    AIRFLOW_CONN_MINIO_DEFAULT: aws://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@?endpoint_url=http%3A%2F%2Fminio%3A9000
-    AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/data_db
+    AIRFLOW_CONN_MINIO_DEFAULT: '{"conn_type": "aws", "login": "${MINIO_ROOT_USER}", "password": "${MINIO_ROOT_PASSWORD}", "extra": {"endpoint_url": "http://minio:9000"}}'
+    AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: '{"conn_type": "postgres", "host": "data-postgres", "login": "${DATA_POSTGRES_USER}", "password": "${DATA_POSTGRES_PASSWORD}", "schema": "data_db", "port": 5432}'
     AIRFLOW__DAG_PROCESSOR__MIN_FILE_PROCESS_INTERVAL: '30'
   volumes:
     - ./airflow/dags:/opt/airflow/dags
@@ -350,6 +350,8 @@ services:
       POSTGRES_USER: ${DATA_POSTGRES_USER}
       POSTGRES_PASSWORD: ${DATA_POSTGRES_PASSWORD}
       POSTGRES_DB: data_db
+    ports:
+      - "25432:5432"
     volumes:
       - data-postgres-volume:/var/lib/postgresql/data
     healthcheck:
