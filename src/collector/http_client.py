@@ -5,7 +5,7 @@ import time
 import requests
 
 from . import settings
-from .settings import _get_riot_api_keys
+from .settings import get_riot_api_keys
 
 
 class HttpClient:
@@ -22,7 +22,7 @@ class HttpClient:
     def _get_api_keys(self):
         """런타임에 API 키 가져오기 (캐싱 포함)"""
         if self._api_keys is None:
-            self._api_keys = _get_riot_api_keys()
+            self._api_keys = get_riot_api_keys()
         return self._api_keys
 
     def get_headers(self):

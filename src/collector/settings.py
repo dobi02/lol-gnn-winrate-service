@@ -15,7 +15,7 @@ BASE_REGIONAL = f"https://{REGION}.api.riotgames.com"
 # Solo Rank Queue ID
 QUEUE_SOLO = 420
 
-def _get_riot_api_keys():
+def get_riot_api_keys():
     """
     Riot API 키를 여러 소스에서 가져오기
     우선순위: Airflow Variable > 환경변수 RIOT_API_KEYS > 환경변수 RIOT_API_KEY
