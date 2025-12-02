@@ -4,8 +4,7 @@ import sys
 from pathlib import Path
 
 # Airflow 환경에서 src 모듈을 import하기 위해 경로 설정
-# Docker 컨테이너 내에서 /opt/src 경로에 프로젝트 소스가 있다고 가정
-sys.path.append("/opt/src")
+sys.path.append("/opt/airflow/dags/git/repo")
 
 from datetime import datetime
 from airflow.sdk import dag, task
