@@ -15,7 +15,7 @@ with DAG(
 ) as dag:
     create_tables_task = SQLExecuteQueryOperator(
         task_id="create_tables_from_file",
-        conn_id="data_db",
+        conn_id="data_postgres_connection",
         sql="src/sql/matchtable.sql",
     )
 
