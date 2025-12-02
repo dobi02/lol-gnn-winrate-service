@@ -15,7 +15,7 @@ sys.path.append("/opt/airflow/dags/git/repo")
 from src.collector.http_client import HttpClient, RiotAPI
 
 
-PG_CONN_ID = "lol_match_db"
+PG_CONN_ID = "data_postgres_connection"
 
 
 # ---------- DB helper ----------
