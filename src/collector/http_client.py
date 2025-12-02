@@ -5,6 +5,7 @@ import time
 import requests
 
 from . import settings
+from .settings import _get_riot_api_keys
 
 
 class HttpClient:
@@ -14,11 +15,21 @@ class HttpClient:
     - 429 (rate limit) → 다음 키로 교체 후 Retry-After 만큼 대기
     """
 
-    def __init__(self, api_keys: Optional[List[str]] = None):
-        self.api_keys: List[str] = api_keys or settings.API_KEYS
-        if not self.api_keys:
-            raise RuntimeError("RIOT API 키가 설정되어 있지 않습니다.")
+    def __init__(self):
+        self.api_keys = None
         self._idx: int = 0  # 현재 사용 중인 키 인덱스
+
+    def _get_api_keys(self):
+        """런타임에 API 키 가져오기 (캐싱 포함)"""
+        if self._api_keys is None:
+            self._api_keys = _get_riot_api_keys()
+        return self._api_keys
+
+    def get_headers(self):
+        api_keys = self._get_api_keys()
+        return {
+            "X-Riot-Token": api_keys[0]  # 첫 번째 키 사용
+        }
 
     @property
     def headers(self) -> Dict[str, str]:
@@ -81,6 +92,7 @@ class RiotAPI:
         self.http = http
 
     def match_by_id(self, match_id: str) -> Optional[Dict[str, Any]]:
+        headers = self.http.get_headers()
         url = f"{settings.BASE_REGIONAL}/lol/match/v5/matches/{match_id}"
         return self.http.get_json(url)
 

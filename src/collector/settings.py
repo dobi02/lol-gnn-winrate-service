@@ -46,7 +46,7 @@ def _get_riot_api_keys():
     )
 
 # API 키 가져오기
-API_KEYS = _get_riot_api_keys()
+#API_KEYS = _get_riot_api_keys()
 
-if not API_KEYS:
-    raise SystemExit("유효한 RIOT API 키가 없습니다.")
+#if not API_KEYS:
+#    raise SystemExit("유효한 RIOT API 키가 없습니다.")
