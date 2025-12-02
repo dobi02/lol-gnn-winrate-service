@@ -33,7 +33,7 @@ class HttpClient:
 
     @property
     def headers(self) -> Dict[str, str]:
-        return {"X-Riot-Token": self._api_keys[self._idx]}
+        return self.get_headers()
 
     def _rotate_key(self) -> None:
         """다음 API 키로 교체."""
