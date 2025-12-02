@@ -16,7 +16,7 @@ class HttpClient:
     """
 
     def __init__(self):
-        self.api_keys = None
+        self._api_keys = None
         self._idx: int = 0  # 현재 사용 중인 키 인덱스
 
     def _get_api_keys(self):
@@ -33,12 +33,12 @@ class HttpClient:
 
     @property
     def headers(self) -> Dict[str, str]:
-        return {"X-Riot-Token": self.api_keys[self._idx]}
+        return {"X-Riot-Token": self._api_keys[self._idx]}
 
     def _rotate_key(self) -> None:
         """다음 API 키로 교체."""
-        if len(self.api_keys) > 1:
-            self._idx = (self._idx + 1) % len(self.api_keys)
+        if len(self._api_keys) > 1:
+            self._idx = (self._idx + 1) % len(self._api_keys)
 
     def get_json(
         self,
