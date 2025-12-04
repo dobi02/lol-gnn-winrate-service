@@ -101,3 +101,26 @@ class MatchRepository:
         with conn:
             with conn.cursor() as cur:
                 cur.executemany(sql, rows)
+
+    def get_existing_match_ids(self, match_ids: List[str]) -> set[str]:
+        """
+        이미 DB에 저장된 match_id들을 반환
+        """
+        if not match_ids:
+            return set()
+
+        # match_ids 리스트를 PostgreSQL array로 변환
+        match_ids_array = match_ids
+
+        sql = """
+        SELECT match_id
+        FROM matches
+        WHERE match_id = ANY(%s)
+        """
+
+        conn = self.pg.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (match_ids_array,))
+                existing_ids = {row[0] for row in cur.fetchall()}
+                return existing_ids
