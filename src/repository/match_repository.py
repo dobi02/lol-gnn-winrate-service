@@ -124,3 +124,22 @@ class MatchRepository:
                 cur.execute(sql, (match_ids_array,))
                 existing_ids = {row[0] for row in cur.fetchall()}
                 return existing_ids
+
+    def get_random_non_root_match(self) -> str | None:
+        """
+        DB에서 is_root=False인 매치 중 하나를 랜덤하게 반환
+        """
+        sql = """
+        SELECT match_id
+        FROM matches
+        WHERE is_root = false
+        ORDER BY RANDOM()
+        LIMIT 1
+        """
+
+        conn = self.pg.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(sql)
+                result = cur.fetchone()
+                return result[0] if result else None
