@@ -3,11 +3,13 @@
 from typing import Optional
 
 import sys
-sys.path.append("/opt/airflow/dags/git/repo")
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+src_dir = os.path.dirname(current_dir)  # src 디렉토리
+if src_dir not in sys.path:
+    sys.path.insert(0, src_dir)
 
-from src.repository.match_repository import MatchRepository
-
-
+from repository.match_repository import MatchRepository
 
 def fetch_next_child_match(**kwargs) -> Optional[str]:
     """
