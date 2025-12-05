@@ -1,7 +1,12 @@
 """Task functions for match chain DAG"""
 
 from typing import Optional
+
+import sys
+sys.path.append("/opt/airflow/dags/git/repo")
+
 from src.repository.match_repository import MatchRepository
+
 
 
 def fetch_next_child_match(**kwargs) -> Optional[str]:

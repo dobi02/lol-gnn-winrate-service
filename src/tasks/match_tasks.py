@@ -1,6 +1,10 @@
 """Individual task functions for match processing DAG"""
 
 from typing import List, Dict
+
+import sys
+sys.path.append("/opt/airflow/dags/git/repo")
+
 from src.collector.http_client import HttpClient, RiotAPI
 from src.repository.match_repository import MatchRepository
 
