@@ -99,7 +99,7 @@ class RiotAPI:
     def match_ids_by_puuid(
         self,
         puuid: str,
-        count: int = 10,
+        count: int = 100,
         queue: Optional[int] = None,
     ) -> List[str]:
         url = f"{settings.BASE_REGIONAL}/lol/match/v5/matches/by-puuid/{puuid}/ids"

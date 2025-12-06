@@ -61,20 +61,35 @@ def fetch_recent_matches(**kwargs) -> List[Dict]:
 
     # Collect participant PUUIDs
     puuids: List[str] = root_match["metadata"]["participants"]
+    root_match_id = root_match["metadata"]["matchId"]
     all_match_ids: set[str] = set()
+    all_match_ids.add(root_match_id)
 
-    # 1. Collect recent match IDs for each player (with deduplication)
+    # 1. Collect match IDs for each player and filter matches before root match
     for puuid in puuids:
         match_ids = api.match_ids_by_puuid(
             puuid=puuid,
-            count=per_player,
+            count=100,
             queue=420,  # Solo queue only
         )
-        all_match_ids.update(match_ids)
 
-    # 2. Include root match
-    root_match_id = root_match["metadata"]["matchId"]
-    all_match_ids.add(root_match_id)
+        # Find root match index in the match list
+        try:
+            root_index = match_ids.index(root_match_id)
+        except ValueError:
+            raise ValueError(f"Root match {root_match_id} not found in player {puuid}'s match history")
+
+        # Log index and match information for this player
+        print(f"플레이어 {puuid[:8]}... (총 {len(match_ids)}개 경기 기록)")
+        print(f"  - Root match {root_match_id}의 인덱스: {root_index}")
+
+        # Select matches before root match (older matches)
+        # Take per_player matches from the ones before root match
+        start_index = root_index+1
+        end_index = min(root_index + per_player + 1, 99)
+        selected_matches = match_ids[start_index:end_index]
+
+        all_match_ids.update(selected_matches)
 
     # 3. Check existing matches in database
     existing_match_ids = repo.get_existing_match_ids(list(all_match_ids))
