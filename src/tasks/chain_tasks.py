@@ -26,7 +26,7 @@ def fetch_next_child_match(**kwargs) -> Optional[str]:
     repo = MatchRepository(conn_id=PG_CONN_ID)
 
     # Get a random non-root match
-    match_id = repo.get_random_non_root_match()
+    match_id = repo.get_latest_non_root_match()
 
     if not match_id:
         print("처리할 자식 매치가 없습니다.")
