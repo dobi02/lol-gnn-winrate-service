@@ -162,3 +162,22 @@ class MatchRepository:
                 cur.execute(sql)
                 results = cur.fetchall()
                 return [row[0] for row in results] if results else []
+
+    def get_latest_non_root_match(self) -> str | None:
+        """
+        DB에서 is_root=False인 매치 중 가장 최신 매치 하나를 반환
+        """
+        sql = """
+        SELECT match_id
+        FROM matches
+        WHERE is_root = false
+        ORDER BY game_start_at DESC
+        LIMIT 1
+        """
+
+        conn = self.pg.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(sql)
+                result = cur.fetchone()
+                return result[0] if result else None
