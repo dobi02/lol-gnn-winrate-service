@@ -18,7 +18,7 @@ from src.tasks.recent_match_tasks import (
 @dag(
     dag_id="riot_match_recent_players_once",
     start_date=datetime(2024, 1, 1),
-    schedule="0 0 0 * *", #1일마다
+    schedule="0 0 * * *", #매일 자정
     catchup=False,
     params={
         "per_player": 9,  # 각 플레이어별 조회할 최근 경기 수
