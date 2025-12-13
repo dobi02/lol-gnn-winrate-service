@@ -3,6 +3,7 @@ from datetime import datetime
 
 from airflow.sdk import dag
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.operators.branch import BaseBranchOperator
 from airflow.operators.empty import EmptyOperator
 
@@ -61,9 +62,19 @@ def riot_match_chain_collector():
     )
 
     # Trigger match collection DAG with new root
-    trigger_collection_task = PythonOperator(
+    # trigger_collection_task = PythonOperator(
+    #     task_id="trigger_match_collection",
+    #     python_callable=trigger_match_collection_with_new_root
+    # )
+
+    trigger_collection_task = TriggerDagRunOperator(
         task_id="trigger_match_collection",
-        python_callable=trigger_match_collection_with_new_root
+        trigger_dag_id="tmp_riot_match_to_postgres_once",
+        conf={
+            "root_match_id": "{{ ti.xcom_pull(task_ids='fetch_next_child_match') }}",
+            "per_player": "{{ params.per_player }}"
+        },
+        wait_for_completion=False
     )
 
     # No matches to process - just log
