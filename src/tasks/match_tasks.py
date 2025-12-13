@@ -75,7 +75,7 @@ def fetch_recent_matches(**kwargs) -> List[Dict]:
 
         # Find root match index in the match list
         try:
-            root_index = match_ids.index(root_match_id)
+            root_index = int(match_ids.index(root_match_id))
         except ValueError:
             raise ValueError(f"Root match {root_match_id} not found in player {puuid}'s match history")
 
