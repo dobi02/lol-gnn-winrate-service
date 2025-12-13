@@ -144,7 +144,7 @@ class MatchRepository:
                 result = cur.fetchone()
                 return result[0] if result else None
 
-    def get_recent_non_root_match(self, limit: int = 20) -> str | None:
+    def get_recent_non_root_matches(self, limit: int = 20) -> str | None:
         """
         DB에서 is_root=False인 매치 중 가장 최신 매치(game_start_at 기준)를 반환
         """
