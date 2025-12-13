@@ -148,7 +148,7 @@ class MatchRepository:
         """
         DB에서 is_root=False인 매치 중 가장 최신 매치(game_start_at 기준)를 반환
         """
-        sql = """
+        sql = f"""
         SELECT match_id
         FROM matches
         WHERE is_root = false
