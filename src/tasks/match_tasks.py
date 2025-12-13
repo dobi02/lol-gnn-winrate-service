@@ -86,7 +86,7 @@ def fetch_recent_matches(**kwargs) -> List[Dict]:
         # Select matches before root match (older matches)
         # Take per_player matches from the ones before root match
         start_index = root_index+1
-        end_index = min(root_index + per_player + 1, 99)
+        end_index = min(root_index + int(per_player) + 1, 99)
         selected_matches = match_ids[start_index:end_index]
 
         all_match_ids.update(selected_matches)
