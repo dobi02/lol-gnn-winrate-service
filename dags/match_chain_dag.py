@@ -69,7 +69,7 @@ def riot_match_chain_collector():
 
     trigger_collection_task = TriggerDagRunOperator(
         task_id="trigger_match_collection",
-        trigger_dag_id="tmp_riot_match_to_postgres_once",
+        trigger_dag_id="riot_match_to_postgres_once",
         conf={
             "root_match_id": "{{ ti.xcom_pull(task_ids='fetch_next_child_match') }}",
             "per_player": "{{ params.per_player }}"
