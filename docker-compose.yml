@@ -16,7 +16,7 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API_AUTH__JWT_SECRET: '${AIRFLOW_JWT_SECRET}'
-    AIRFLOW_CONN_MINIO_DEFAULT: '{"conn_type": "aws", "login": "${MINIO_ROOT_USER}", "password": "${MINIO_ROOT_PASSWORD}", "extra": {"endpoint_url": "http://minio:9000"}}'
+    AIRFLOW_CONN_MINIO_DEFAULT: '{"conn_type": "aws", "login": "${MINIO_ROOT_USER}", "password": "${MINIO_ROOT_PASSWORD}", "extra": {"endpoint_url": "http://lol-minio:9000"}}'
     AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: '{"conn_type": "postgres", "host": "data-postgres", "login": "${DATA_POSTGRES_USER}", "password": "${DATA_POSTGRES_PASSWORD}", "schema": "data_db", "port": 5432}'
     AIRFLOW__DAG_PROCESSOR__MIN_FILE_PROCESS_INTERVAL: '30'
   volumes:
@@ -56,7 +56,7 @@ services:
       echo 'All permissions fixed! Exiting.'
       "
     networks:
-      - data-platform-net
+      - lol-network
   # ----------------------------------------------------
   # PostgreSQL (Airflow 메타데이터 DB)
   # ----------------------------------------------------
@@ -75,7 +75,7 @@ services:
       start_period: 5s
     restart: always
     networks:
-      - data-platform-net
+      - lol-network
 
   # ----------------------------------------------------
   # Airflow Apiserver
@@ -97,7 +97,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-    - data-platform-net
+    - lol-network
     - proxy-net
 
   # ----------------------------------------------------
@@ -118,7 +118,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-    - data-platform-net
+    - lol-network
 
   # ----------------------------------------------------
   # Airflow DAG Processor
@@ -138,7 +138,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-    - data-platform-net
+    - lol-network
 
   # ----------------------------------------------------
   # Airflow Triggerer
@@ -158,7 +158,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     networks:
-    - data-platform-net
+    - lol-network
 
   # ----------------------------------------------------
   # Airflow Init
@@ -255,12 +255,13 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: apache-airflow-providers-fab
     user: "0:0"
     networks:
-    - data-platform-net
+    - lol-network
 
   # ----------------------------------------------------
   # MinIO (데이터 레이크)
   # ----------------------------------------------------
-  minio:
+  lol-minio:
+    restart: always
     image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     command: server /data --console-address ":9001"
     environment:
@@ -277,7 +278,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - data-platform-net
+      - lol-network
       - proxy-net
   # ----------------------------------------------------
   # MinIO Init (버킷 자동 생성 - IaC)
@@ -285,7 +286,7 @@ services:
   minio-init:
     image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
     depends_on:
-      minio:
+      lol-minio:
         condition: service_healthy
     entrypoint:
       - /bin/sh
@@ -294,7 +295,7 @@ services:
         echo "Init script started..."
         
         # 1. MinIO 서버 연결 시도 (성공할 때까지 반복)
-        until /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
+        until /usr/bin/mc alias set myminio http://lol-minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
           echo "...waiting for MinIO connection..."
           sleep 1
         done
@@ -315,7 +316,7 @@ services:
         
         exit 0
     networks:
-      - data-platform-net
+      - lol-network
 
   # ----------------------------------------------------
   # Git-Sync(DAG 배포용)
@@ -336,7 +337,8 @@ services:
       - /bin/sh
       - -c
       - |
-        echo ".worktrees" > /dags/.airflowignore &&/git-sync
+        echo ".worktrees" > /dags/.airflowignore && /git-sync
+    restart: always
     depends_on:
       airflow-init:
         condition: service_completed_successfully
@@ -361,7 +363,7 @@ services:
       start_period: 5s
     restart: always
     networks:
-      - data-platform-net
+      - lol-network
   # ----------------------------------------------------
   # DB Init (MLflow DB 자동 생성)
   # ----------------------------------------------------
@@ -391,12 +393,12 @@ services:
         echo "Database 'mlflow_db' check/creation complete."
         exit 0
     networks:
-      - data-platform-net
+      - lol-network
 
   # ----------------------------------------------------
   # MLflow Server (Model Registry & Tracking)
   # ----------------------------------------------------
-  mlflow-server:
+  lol-mlflow:
     build:
       context: .
       dockerfile: dockerfile/mlflow.Dockerfile
@@ -405,7 +407,7 @@ services:
     expose:
       - 5000
     environment:
-      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
       - MLFLOW_S3_IGNORE_TLS=true
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
@@ -428,7 +430,7 @@ services:
       db-init:
         condition: service_completed_successfully
     networks:
-      - data-platform-net
+      - lol-network
       - proxy-net
     restart: always
 
@@ -444,8 +446,8 @@ services:
     expose:
       - 8888
     environment:
-      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
-      - MLFLOW_S3_ENDPOINT_URL=http://minio:9000
+      - MLFLOW_TRACKING_URI=http://lol-mlflow:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - DB_HOST=data-postgres
@@ -461,8 +463,8 @@ services:
       - ./notebooks:/home/jovyan/work
     depends_on:
       - data-postgres
-      - minio
-      - mlflow-server
+      - lol-minio
+      - lol-mlflow
     shm_size: '4gb'
     deploy:
       resources:
@@ -475,7 +477,7 @@ services:
               count: all
               capabilities: [ gpu ]
     networks:
-        - data-platform-net
+        - lol-network
         - proxy-net
     restart: always
   # ----------------------------------------------------
@@ -493,7 +495,7 @@ services:
 #    command: >
 #      /bin/sh -c "envsubst '\$$MY_DOMAIN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
 #    networks:
-#      - data-platform-net
+#      - lol-network
 #    restart: unless-stopped
 #    depends_on:
 #      - airflow-apiserver
@@ -507,7 +509,7 @@ volumes:
   data-postgres-volume:
 
 networks:
-  data-platform-net:
+  lol-network:
     driver: bridge
   proxy-net:
     external: true
