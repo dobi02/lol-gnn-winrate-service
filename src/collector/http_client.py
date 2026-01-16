@@ -28,7 +28,7 @@ class HttpClient:
     def get_headers(self):
         api_keys = self._get_api_keys()
         return {
-            "X-Riot-Token": api_keys[0]  # 첫 번째 키 사용
+            "X-Riot-Token": api_keys[self._idx]
         }
 
     @property
@@ -108,3 +108,7 @@ class RiotAPI:
             params["queue"] = queue
         data = self.http.get_json(url, params=params) or []
         return list(data)
+    
+    def champion_masteries_by_puuid(self, puuid: str):
+        url = f"{settings.BASE_PLATFORM}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}"
+        return self.http.get_json(url) or []
