@@ -148,12 +148,15 @@ def save_all_to_postgres(**kwargs):
 
     # 2. Save Mastery data (TODO: implement get_champion_masteries)
     # Currently commented out to prevent errors
-    # puuid_set = {
-    #     p["puuid"]
-    #     for m in matches_json
-    #     for p in m["info"]["participants"]
-    # }
+    http = HttpClient()
+    api = RiotAPI(http)
 
-    # for puuid in puuid_set:
-    #     mastery_list = api.get_champion_masteries(puuid)
-    #     repo.upsert_masteries(puuid, mastery_list)
+    puuid_set = {
+        p["puuid"]
+        for m in matches_json
+        for p in m["info"]["participants"]
+    }
+
+    for puuid in puuid_set:
+        mastery_list = api.champion_masteries_by_puuid(puuid)
+        repo.upsert_masteries(puuid, mastery_list)
