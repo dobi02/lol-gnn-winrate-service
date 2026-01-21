@@ -146,8 +146,24 @@ def save_all_to_postgres(**kwargs):
 
     print(f"{len(matches_json)}개 경기 저장 완료")
 
-    # 2. Save Mastery data (TODO: implement get_champion_masteries)
-    # Currently commented out to prevent errors
+def save_champion_mastery(**kwargs):
+    """
+    Save Champion Mastery data to PostgreSQL.
+    - Pull matches from XCom (fetch_recent_matches)
+    - Extract unique PUUIDs
+    - Call RiotAPI.champion_masteries_by_puuid()
+    - Upsert to DB
+    """
+    ti = kwargs["ti"]
+    matches_json = ti.xcom_pull(task_ids="fetch_recent_matches")
+
+    if not matches_json:
+        print("[save_champion_mastery] No matches_json in XCom. Skip.")
+        return
+
+    PG_CONN_ID = "data_postgres_connection"
+    repo = MatchRepository(conn_id=PG_CONN_ID)
+
     http = HttpClient()
     api = RiotAPI(http)
 
@@ -155,8 +171,15 @@ def save_all_to_postgres(**kwargs):
         p["puuid"]
         for m in matches_json
         for p in m["info"]["participants"]
+        if p.get("puuid")
     }
 
+    print(f"[save_champion_mastery] unique puuids: {len(puuid_set)}")
+
+    saved_cnt = 0
     for puuid in puuid_set:
-        mastery_list = api.champion_masteries_by_puuid(puuid)
+        mastery_list = api.champion_masteries_by_puuid(puuid) or []
         repo.upsert_masteries(puuid, mastery_list)
+        saved_cnt += 1
+
+    print(f"[save_champion_mastery] mastery saved for {saved_cnt} players")
