@@ -72,16 +72,23 @@ def fetch_recent_matches(**kwargs) -> List[Dict]:
             count=100,
             queue=420,  # Solo queue only
         )
-
         # Find root match index in the match list
-        try:
-            root_index = int(match_ids.index(root_match_id))
-        except ValueError:
-            raise ValueError(f"Root match {root_match_id} not found in player {puuid}'s match history")
-
-        # Log index and match information for this player
-        print(f"플레이어 {puuid[:8]}... (총 {len(match_ids)}개 경기 기록)")
-        print(f"  - Root match {root_match_id}의 인덱스: {root_index}")
+        if root_match_id in match_ids:
+            root_index = match_ids.index(root_match_id)
+        
+            print(f"플레이어 {puuid[:8]}... (총 {len(match_ids)}개 경기 기록)")
+            print(f"  - Root match {root_match_id}의 인덱스: {root_index}")
+        
+            # root match "이후"(더 과거) 경기들 선택
+            start_index = root_index + 1
+            end_index = min(root_index + int(per_player) + 1, len(match_ids))
+            selected_matches = match_ids[start_index:end_index]
+        
+        else:
+            # ✅ root match가 목록에 없으면: 최신 경기에서 per_player개 폴백
+            print(f"[WARN] Root match {root_match_id} not found for puuid={puuid[:8]}... "
+                  f"(count={len(match_ids)}). Fallback to most recent {per_player} matches.")
+            selected_matches = match_ids[:int(per_player)]
 
         # Select matches before root match (older matches)
         # Take per_player matches from the ones before root match
