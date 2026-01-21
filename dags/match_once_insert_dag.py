@@ -11,7 +11,8 @@ sys.path.append("/opt/airflow/dags/git/repo")
 from src.tasks.match_tasks import (
     fetch_root_match,
     fetch_recent_matches,
-    save_all_to_postgres
+    save_all_to_postgres,
+    save_champion_mastery
 )
 
 
