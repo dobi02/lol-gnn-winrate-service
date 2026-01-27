@@ -71,31 +71,33 @@ class MatchRepository:
         """
         mastery_list: Riot API champion-mastery-v4 결과(JSON 배열)
         """
-        rows = []
-        for m in mastery_list:
-            rows.append(
-                (
-                    puuid,
-                    m["championId"],
-                    m.get("championLevel"),
-                    m.get("championPoints"),
-                    m.get("tokensEarned", 0),
-                )
+        rows = [
+            (
+                puuid,
+                m["championId"],
+                m.get("championLevel"),
+                m.get("championPoints"),
+                m.get("tokensEarned", 0),
             )
-
+            for m in mastery_list
+        ]
         if not rows:
             return
 
         sql = """
         INSERT INTO champion_masteries (
-          puuid, champion_id, champion_level,
-          champion_points, tokens_earned
+        puuid, champion_id, champion_level,
+        champion_points, tokens_earned
         )
         VALUES (%s, %s, %s, %s, %s)
         ON CONFLICT (puuid, champion_id) DO UPDATE
         SET champion_level  = EXCLUDED.champion_level,
             champion_points = EXCLUDED.champion_points,
-            tokens_earned   = EXCLUDED.tokens_earned;
+            tokens_earned   = EXCLUDED.tokens_earned
+        WHERE
+            champion_masteries.champion_level  IS DISTINCT FROM EXCLUDED.champion_level
+        OR champion_masteries.champion_points IS DISTINCT FROM EXCLUDED.champion_points
+        OR champion_masteries.tokens_earned   IS DISTINCT FROM EXCLUDED.tokens_earned;
         """
         conn = self.pg.get_conn()
         with conn:
