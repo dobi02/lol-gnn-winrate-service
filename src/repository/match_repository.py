@@ -183,3 +183,33 @@ class MatchRepository:
                 cur.execute(sql)
                 result = cur.fetchone()
                 return result[0] if result else None
+                
+    def upsert_mastery_one(self, puuid: str, champion_id: int, m: dict):
+        row = (
+            puuid,
+            int(champion_id),
+            m.get("championLevel"),
+            m.get("championPoints"),
+            m.get("tokensEarned", 0),
+        )
+
+        sql = """
+        INSERT INTO champion_masteries (
+        puuid, champion_id, champion_level,
+        champion_points, tokens_earned
+        )
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (puuid, champion_id) DO UPDATE
+        SET champion_level  = EXCLUDED.champion_level,
+            champion_points = EXCLUDED.champion_points,
+            tokens_earned   = EXCLUDED.tokens_earned
+        WHERE
+            champion_masteries.champion_level  IS DISTINCT FROM EXCLUDED.champion_level
+        OR champion_masteries.champion_points IS DISTINCT FROM EXCLUDED.champion_points
+        OR champion_masteries.tokens_earned   IS DISTINCT FROM EXCLUDED.tokens_earned;
+        """
+
+        conn = self.pg.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, row)

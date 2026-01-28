@@ -154,39 +154,41 @@ def save_all_to_postgres(**kwargs):
     print(f"{len(matches_json)}개 경기 저장 완료")
 
 def save_champion_mastery(**kwargs):
-    """
-    Save Champion Mastery data to PostgreSQL.
-    - Pull matches from XCom (fetch_recent_matches)
-    - Extract unique PUUIDs
-    - Call RiotAPI.champion_masteries_by_puuid()
-    - Upsert to DB
-    """
     ti = kwargs["ti"]
     matches_json = ti.xcom_pull(task_ids="fetch_recent_matches")
 
     if not matches_json:
-        print("[save_champion_mastery] No matches_json in XCom. Skip.")
+        print("[save_champion_masteries] No matches_json. Skip.")
         return
-
-    PG_CONN_ID = "data_postgres_connection"
-    repo = MatchRepository(conn_id=PG_CONN_ID)
 
     http = HttpClient()
     api = RiotAPI(http)
 
-    puuid_set = {
-        p["puuid"]
-        for m in matches_json
-        for p in m["info"]["participants"]
-        if p.get("puuid")
-    }
+    PG_CONN_ID = "data_postgres_connection"
+    repo = MatchRepository(conn_id=PG_CONN_ID)
 
-    print(f"[save_champion_mastery] unique puuids: {len(puuid_set)}")
+    # 1) match에서 실제 사용한 (puuid, championId)만 수집
+    pairs = set()
+    for m in matches_json:
+        for p in m["info"]["participants"]:
+            puuid = p.get("puuid")
+            champ = p.get("championId")
+            if puuid and champ is not None:
+                pairs.add((puuid, int(champ)))
 
-    saved_cnt = 0
-    for puuid in puuid_set:
-        mastery_list = api.champion_masteries_by_puuid(puuid) or []
-        repo.upsert_masteries(puuid, mastery_list)
-        saved_cnt += 1
+    print(f"[save_champion_masteries] unique (puuid,champ) pairs = {len(pairs)}")
 
-    print(f"[save_champion_mastery] mastery saved for {saved_cnt} players")
+    # 2) (puuid, championId) 단건 mastery 조회 후 저장
+    for puuid, champ_id in pairs:
+        try:
+            mastery = api.champion_mastery_by_puuid_and_champion(puuid, champ_id)
+        except Exception as e:
+            print(f"[WARN] mastery fetch failed puuid={puuid[:8]} champ={champ_id}: {e}")
+            continue
+
+        if not mastery:
+            continue
+
+        repo.upsert_mastery_one(puuid, champ_id, mastery)
+
+    print("[save_champion_masteries] done")

@@ -82,7 +82,6 @@ class HttpClient:
 
         raise RuntimeError(f"Max retries exceeded for URL: {url}")
 
-
 class RiotAPI:
     """
     Riot Match V5 API 래퍼
@@ -112,3 +111,7 @@ class RiotAPI:
     def champion_masteries_by_puuid(self, puuid: str):
         url = f"{settings.BASE_PLATFORM}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}"
         return self.http.get_json(url) or []
+        
+    def champion_mastery_by_puuid_and_champion(self, puuid: str, champion_id: int):
+        url = f"{settings.BASE_PLATFORM}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/by-champion/{champion_id}"
+        return self.http.get_json(url)  # dict 반환(없으면 404일 수 있음)
