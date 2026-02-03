@@ -3,3 +3,4 @@
 airflow/
 ds_env/
 minio/
+notebooks/
