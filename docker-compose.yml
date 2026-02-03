@@ -500,14 +500,14 @@ services:
     networks:
       - lol-network
 
+# ----------------------------------------------------
+  # Prediction API (FastAPI + GNN Model)
   # ----------------------------------------------------
-  # Serving Engine (FastAPI + GNN Model)
-  # ----------------------------------------------------
-  serving-engine:
+  prediction-api:
     build:
-      context: .
-      dockerfile: dockerfile/serving.Dockerfile
-    container_name: lol_serving
+      context: ./api       # Dockerfile이 있는 폴더 경로
+      dockerfile: Dockerfile
+    container_name: prediction-api
     restart: always
     ports:
       - "8000:8000"
@@ -519,14 +519,9 @@ services:
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - AWS_DEFAULT_REGION=us-east-1
-
-      # 나중에 RIOT API KEY 추가
-      #- RIOT_API_KEY=${RIOT_API_KEY}
-
+      - RIOT_API_KEY=${RIOT_API_KEY}
     volumes:
-      - ./serving:/app/serving
-      - ./shared_modules:/app/shared_modules
-
+      - ./api/app:/app/app   # 코드 수정 시 Hot Reload 지원
     depends_on:
       data-postgres:
         condition: service_healthy
@@ -534,8 +529,9 @@ services:
         condition: service_healthy
       lol-mlflow:
         condition: service_started
-
-    # [GPU 설정] 호스트의 NVIDIA GPU 사용
+    networks:
+      - lol-network
+      - proxy-net
     deploy:
       resources:
         reservations:
@@ -544,30 +540,6 @@ services:
               count: all
               capabilities: [gpu]
 
-    networks:
-      - lol-network
-      - proxy-net
-  # ----------------------------------------------------
-  # Nginx 리버스 프록시
-  # ----------------------------------------------------
-#  nginx:
-#    image: nginx:trixie-perl
-#    ports:
-#      - "80:80"
-#      # - "443:443"
-#    volumes:
-#      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-#    environment:
-#      - MY_DOMAIN=${MY_DOMAIN}
-#    command: >
-#      /bin/sh -c "envsubst '\$$MY_DOMAIN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
-#    networks:
-#      - lol-network
-#    restart: unless-stopped
-#    depends_on:
-#      - airflow-apiserver
-#      - ds-environment
-#      - minio
 # ----------------------------------------------------
 # 최상위 볼륨 및 네트워크 정의
 # ----------------------------------------------------

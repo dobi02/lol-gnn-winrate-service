@@ -1,9 +1,0 @@
-fastapi
-uvicorn[standard]
-asyncpg
-psycopg2-binary
-redis
-httpx
-mlflow
-pydantic
-pydantic-settings
