@@ -1,3 +1,5 @@
+<img width="8192" height="3800" alt="Image" src="https://github.com/user-attachments/assets/71957986-179a-46aa-8009-80ab64f35627" />
+
 # Data Science Platform using Docker
 
 This project uses Docker Compose to set up a comprehensive data science platform, including Apache Airflow for workflow orchestration, MinIO as a data lake, JupyterLab for data science, and PostgreSQL databases for metadata and data storage.
