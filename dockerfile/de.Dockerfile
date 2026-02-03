@@ -1,0 +1,40 @@
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    sudo \
+    git \
+    curl \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir \
+    apache-airflow==3.1.2
+
+RUN ssh-keygen -A
+
+RUN useradd -m -s /bin/bash de_user \
+    && echo "de_user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+RUN mkdir /app && chown de_user:de_user /app
+WORKDIR /app
+
+# SSH settings
+COPY ssh_keys/de_authorized_keys /home/de_user/.ssh/authorized_keys
+RUN chmod 700 /home/de_user/.ssh && \
+    chmod 600 /home/de_user/.ssh/authorized_keys && \
+    chown -R de_user:de_user /home/de_user/.ssh
+
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+RUN sed -i 's/ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+
+# # Install python requirements
+# COPY requirements.de.txt .
+# RUN pip install --no-cache-dir -r requirements.ds.txt
+
+# USER de_user
+
+# Expose 22 port(ssh)
+EXPOSE 22
+
+CMD ["/bin/bash", "-c", "mkdir -p /run/sshd && exec /usr/sbin/sshd -D"]

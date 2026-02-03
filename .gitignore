@@ -1,11 +1,5 @@
-#.gitignore
-
-# Python 가상 환경
-venv/
-
-# Python 캐시 파일
-__pycache__/
-*.pyc
-
-# DVC 로컬 설정 (민감 정보 포함 가능)
-.dvc/config.local
+.env
+.idea
+airflow/
+ds_env/
+minio/

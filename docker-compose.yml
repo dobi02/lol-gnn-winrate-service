@@ -1,0 +1,583 @@
+# ------------------------------------------------------------------
+# Airflow 공통 설정 정의 (YAML Anchor) 
+# ------------------------------------------------------------------
+x-airflow-common:
+  &airflow-common
+  image: apache/airflow:3.1.2-python3.12
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.1.2}
+  environment:
+    &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/airflow
+    # AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-apiserver:8080/execution/
+    AIRFLOW__CORE__FERNET_KEY: '${AIRFLOW_FERNET_KEY}'
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__API_AUTH__JWT_SECRET: '${AIRFLOW_JWT_SECRET}'
+    AIRFLOW_CONN_MINIO_DEFAULT: '{"conn_type": "aws", "login": "${MINIO_ROOT_USER}", "password": "${MINIO_ROOT_PASSWORD}", "extra": {"endpoint_url": "http://lol-minio:9000"}}'
+    AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: '{"conn_type": "postgres", "host": "data-postgres", "login": "${DATA_POSTGRES_USER}", "password": "${DATA_POSTGRES_PASSWORD}", "schema": "data_db", "port": 5432}'
+    AIRFLOW__DAG_PROCESSOR__MIN_FILE_PROCESS_INTERVAL: '30'
+  volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+
+services:
+  # ----------------------------------------------------
+  # Fix-permissions (마운트 폴더 권한 변경)
+  # ----------------------------------------------------
+  fix-perms:
+    image: alpine:latest
+    user: "0:0"
+    volumes:
+      - ./airflow:/mnt/airflow
+      - ./ds_env:/mnt/ds_env
+      - ./minio/data:/mnt/minio
+    command: >
+      sh -c "
+      echo 'Starting permission fix...' &&
+      echo 'Fixing Airflow...' &&
+      chown -R ${AIRFLOW_UID}:0 /mnt/airflow &&
+      chmod -R 775 /mnt/airflow &&
+      echo 'Fixing Jupyter...' &&
+      chown -R 1000:0 /mnt/ds_env &&
+      chmod -R 775 /mnt/ds_env &&
+      echo 'Fixing MinIO...' &&
+      chown -R 1000:0 /mnt/minio &&
+      chmod -R 775 /mnt/minio &&
+
+      echo 'All permissions fixed! Exiting.'
+      "
+    networks:
+      - lol-network
+  # ----------------------------------------------------
+  # PostgreSQL (Airflow 메타데이터 DB)
+  # ----------------------------------------------------
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    networks:
+      - lol-network
+
+  # ----------------------------------------------------
+  # Airflow Apiserver
+  # ----------------------------------------------------
+  airflow-apiserver:
+    <<: *airflow-common
+    command: api-server
+    #ports:
+    #  - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/api/v2/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always 
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+    - lol-network
+    - proxy-net
+
+  # ----------------------------------------------------
+  # Airflow Scheduler
+  # ----------------------------------------------------
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+    - lol-network
+
+  # ----------------------------------------------------
+  # Airflow DAG Processor
+  # ----------------------------------------------------
+  airflow-dag-processor:
+    <<: *airflow-common
+    command: dag-processor
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type DagProcessorJob --hostname "$${HOSTNAME}"']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+    - lol-network
+
+  # ----------------------------------------------------
+  # Airflow Triggerer
+  # ----------------------------------------------------
+  airflow-triggerer:
+    <<: *airflow-common
+    command: triggerer
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+    - lol-network
+
+  # ----------------------------------------------------
+  # Airflow Init
+  # ----------------------------------------------------
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    # yamllint disable rule:line-length
+    command:
+      - -c
+      - |
+        if [[ -z "${AIRFLOW_UID}" ]]; then
+          echo
+          echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
+          echo "If you are on Linux, you SHOULD follow the instructions below to set "
+          echo "AIRFLOW_UID environment variable, otherwise files will be owned by root."
+          echo "For other operating systems you can get rid of the warning with manually created .env file:"
+          echo "    See: https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#setting-the-right-airflow-user"
+          echo
+          export AIRFLOW_UID=$$(id -u)
+        fi
+        one_meg=1048576
+        mem_available=$$(($$(getconf _PHYS_PAGES) * $$(getconf PAGE_SIZE) / one_meg))
+        cpus_available=$$(grep -cE 'cpu[0-9]+' /proc/stat)
+        disk_available=$$(df / | tail -1 | awk '{print $$4}')
+        warning_resources="false"
+        if (( mem_available < 4000 )) ; then
+          echo
+          echo -e "\033[1;33mWARNING!!!: Not enough memory available for Docker.\e[0m"
+          echo "At least 4GB of memory required. You have $$(numfmt --to iec $$((mem_available * one_meg)))"
+          echo
+          warning_resources="true"
+        fi
+        if (( cpus_available < 2 )); then
+          echo
+          echo -e "\033[1;33mWARNING!!!: Not enough CPUS available for Docker.\e[0m"
+          echo "At least 2 CPUs recommended. You have $${cpus_available}"
+          echo
+          warning_resources="true"
+        fi
+        if (( disk_available < one_meg * 10 )); then
+          echo
+          echo -e "\033[1;33mWARNING!!!: Not enough Disk space available for Docker.\e[0m"
+          echo "At least 10 GBs recommended. You have $$(numfmt --to iec $$((disk_available * 1024 )))"
+          echo
+          warning_resources="true"
+        fi
+        if [[ $${warning_resources} == "true" ]]; then
+          echo
+          echo -e "\033[1;33mWARNING!!!: You have not enough resources to run Airflow (see above)!\e[0m"
+          echo "Please follow the instructions to increase amount of resources available:"
+          echo "   https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#before-you-begin"
+          echo
+        fi
+        echo
+        echo "Creating missing opt dirs if missing:"
+        echo
+        mkdir -v -p /opt/airflow/{logs,dags,plugins,config}
+        echo
+        echo "Airflow version:"
+        /entrypoint airflow version
+        echo
+        echo "Files in shared volumes:"
+        echo
+        ls -la /opt/airflow/{logs,dags,plugins,config}
+        echo
+        echo "Running airflow config list to create default config file if missing."
+        echo
+        /entrypoint airflow config list >/dev/null
+        echo
+        echo "Files in shared volumes:"
+        echo
+        ls -la /opt/airflow/{logs,dags,plugins,config}
+        echo
+        echo "Change ownership of files in /opt/airflow to ${AIRFLOW_UID}:0"
+        echo
+        chown -R "${AIRFLOW_UID}:0" /opt/airflow/
+        echo
+        echo "Change ownership of files in shared volumes to ${AIRFLOW_UID}:0"
+        echo
+        chown -v -R "${AIRFLOW_UID}:0" /opt/airflow/{logs,dags,plugins,config}
+        echo
+        echo "Files in shared volumes:"
+        echo
+        ls -la /opt/airflow/{logs,dags,plugins,config}
+
+    # yamllint enable rule:line-length
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
+      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+      _PIP_ADDITIONAL_REQUIREMENTS: apache-airflow-providers-fab
+    user: "0:0"
+    networks:
+    - lol-network
+
+  # ----------------------------------------------------
+  # MinIO (데이터 레이크)
+  # ----------------------------------------------------
+  lol-minio:
+    restart: always
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./minio/data:/data
+    #ports:
+    #  - "9000:9000" # S3 API 포트
+    #  - "9001:9001" # 웹 콘솔 포트
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    networks:
+      - lol-network
+      - proxy-net
+  # ----------------------------------------------------
+  # MinIO Init (버킷 자동 생성 - IaC)
+  # ----------------------------------------------------
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
+    depends_on:
+      lol-minio:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Init script started..."
+        
+        # 1. MinIO 서버 연결 시도 (성공할 때까지 반복)
+        until /usr/bin/mc alias set myminio http://lol-minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}; do
+          echo "...waiting for MinIO connection..."
+          sleep 1
+        done
+        
+        echo "Alias set successfully."
+
+        # 2. 버킷 생성 시도 (에러 발생 시 로그 출력)
+        if /usr/bin/mc mb --ignore-existing myminio/mlflow; then
+          echo "---------------------------------------------------"
+          echo "SUCCESS: MinIO bucket 'mlflow' created successfully."
+          echo "---------------------------------------------------"
+        else
+          echo "---------------------------------------------------"
+          echo "ERROR: Failed to create bucket! Check logs above."
+          echo "---------------------------------------------------"
+          exit 1
+        fi
+        
+        exit 0
+    networks:
+      - lol-network
+
+  # ----------------------------------------------------
+  # Git-Sync(DAG 배포용)
+  # ----------------------------------------------------
+  git-sync:
+    image: registry.k8s.io/git-sync/git-sync:v4.5.0
+    user: "${AIRFLOW_UID}:0"
+    volumes:
+          - ./airflow/dags:/dags
+    environment:
+      GITSYNC_REPO: https://github.com/dobi02/lol-gnn-winrate-service.git
+      GIT_SYNC_BRANCH: example/dags
+      GITSYNC_PERIOD: 60s
+      # GITSYNC_ONE_TIME: 'false'
+      GITSYNC_ROOT: /dags/git
+      GITSYNC_LINK: repo
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo ".worktrees" > /dags/.airflowignore && /git-sync
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # ----------------------------------------------------
+  # PostgreSQL (범용 데이터 DB)
+  # ----------------------------------------------------
+  data-postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DATA_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DATA_POSTGRES_PASSWORD}
+      POSTGRES_DB: data_db
+    ports:
+      - "25432:5432"
+    volumes:
+      - data-postgres-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DATA_POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+    networks:
+      - lol-network
+  # ----------------------------------------------------
+  # DB Init (MLflow DB 자동 생성)
+  # ----------------------------------------------------
+  db-init:
+    image: postgres:16
+    depends_on:
+      data-postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${DATA_POSTGRES_PASSWORD}
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for data-postgres..."
+        # DB가 준비될 때까지 대기
+        until pg_isready -h data-postgres -U ${DATA_POSTGRES_USER}; do
+          echo "..."
+          sleep 2
+        done
+
+        echo "Creating mlflow_db database..."
+        # DB 존재 여부 확인 후 없으면 생성 (멱등성 보장)
+        psql -h data-postgres -U ${DATA_POSTGRES_USER} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'mlflow_db'" | grep -q 1 || \
+        psql -h data-postgres -U ${DATA_POSTGRES_USER} -d postgres -c "CREATE DATABASE mlflow_db"
+
+        echo "Database 'mlflow_db' check/creation complete."
+        exit 0
+    networks:
+      - lol-network
+
+  # ----------------------------------------------------
+  # MLflow Server (Model Registry & Tracking)
+  # ----------------------------------------------------
+  lol-mlflow:
+    build:
+      context: .
+      dockerfile: dockerfile/mlflow.Dockerfile
+    #ports:
+    #  - "5000:5000"
+    expose:
+      - 5000
+    environment:
+      - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
+      - MLFLOW_S3_IGNORE_TLS=true
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - AWS_DEFAULT_REGION=us-east-1
+      - MLFLOW_SERVER_ALLOWED_HOSTS=*
+      - MLFLOW_SERVER_CORS_ALLOWED_ORIGINS=*
+      - MINIO_BROWSER_REDIRECT_URL=https://minio.hyu.life
+      - MINIO_SERVER_URL=https://s3.hyu.life
+    command: >
+      mlflow server
+      --backend-store-uri postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/mlflow_db
+      --default-artifact-root s3://mlflow/
+      --host 0.0.0.0
+      --port 5000
+    depends_on:
+      data-postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+      db-init:
+        condition: service_completed_successfully
+    networks:
+      - lol-network
+      - proxy-net
+    restart: always
+
+  # ----------------------------------------------------
+  # jupyter
+  # ----------------------------------------------------
+  jupyter:
+    build:
+      context: .
+      dockerfile: dockerfile/jupyter.Dockerfile
+    #ports:
+    #  - "8888:8888"
+    expose:
+      - 8888
+    environment:
+      - MLFLOW_TRACKING_URI=http://lol-mlflow:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - DB_HOST=data-postgres
+      - DB_PORT=5432
+      - DB_USER=${DATA_POSTGRES_USER}
+      - DB_PASS=${DATA_POSTGRES_PASSWORD}
+      - DB_NAME=data_db
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
+      # 편의 설정
+      - JUPYTER_ENABLE_LAB=yes
+      - RESTARTABLE=yes
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    depends_on:
+      - data-postgres
+      - lol-minio
+      - lol-mlflow
+    shm_size: '4gb'
+    deploy:
+      resources:
+        limits:
+          cpus: '6.0'
+          memory: 16G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    networks:
+        - lol-network
+        - proxy-net
+    restart: always
+
+  # ----------------------------------------------------
+  # Redis (Riot API 캐싱용)
+  # ----------------------------------------------------
+  lol-redis:
+    image: redis:alpine
+    container_name: lol_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lol-network
+
+  # ----------------------------------------------------
+  # Serving Engine (FastAPI + GNN Model)
+  # ----------------------------------------------------
+  serving-engine:
+    build:
+      context: .
+      dockerfile: dockerfile/serving.Dockerfile
+    container_name: lol_serving
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/data_db
+      - REDIS_URL=redis://lol-redis:6379/0
+      - MLFLOW_TRACKING_URI=http://lol-mlflow:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - AWS_DEFAULT_REGION=us-east-1
+
+      # 나중에 RIOT API KEY 추가
+      #- RIOT_API_KEY=${RIOT_API_KEY}
+
+    volumes:
+      - ./serving:/app/serving
+      - ./shared_modules:/app/shared_modules
+
+    depends_on:
+      data-postgres:
+        condition: service_healthy
+      lol-redis:
+        condition: service_healthy
+      lol-mlflow:
+        condition: service_started
+
+    # [GPU 설정] 호스트의 NVIDIA GPU 사용
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    networks:
+      - lol-network
+      - proxy-net
+  # ----------------------------------------------------
+  # Nginx 리버스 프록시
+  # ----------------------------------------------------
+#  nginx:
+#    image: nginx:trixie-perl
+#    ports:
+#      - "80:80"
+#      # - "443:443"
+#    volumes:
+#      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+#    environment:
+#      - MY_DOMAIN=${MY_DOMAIN}
+#    command: >
+#      /bin/sh -c "envsubst '\$$MY_DOMAIN' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+#    networks:
+#      - lol-network
+#    restart: unless-stopped
+#    depends_on:
+#      - airflow-apiserver
+#      - ds-environment
+#      - minio
+# ----------------------------------------------------
+# 최상위 볼륨 및 네트워크 정의
+# ----------------------------------------------------
+volumes:
+  postgres-db-volume:
+  data-postgres-volume:
+  redis_data:
+
+networks:
+  lol-network:
+    driver: bridge
+  proxy-net:
+    external: true
