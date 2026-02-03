@@ -273,9 +273,9 @@ services:
     #  - "9000:9000" # S3 API 포트
     #  - "9001:9001" # 웹 콘솔 포트
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
-      interval: 5s
-      timeout: 5s
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 30s
       retries: 5
     networks:
       - lol-network
@@ -480,6 +480,73 @@ services:
         - lol-network
         - proxy-net
     restart: always
+
+  # ----------------------------------------------------
+  # Redis (Riot API 캐싱용)
+  # ----------------------------------------------------
+  lol-redis:
+    image: redis:alpine
+    container_name: lol_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lol-network
+
+  # ----------------------------------------------------
+  # Serving Engine (FastAPI + GNN Model)
+  # ----------------------------------------------------
+  serving-engine:
+    build:
+      context: .
+      dockerfile: dockerfile/serving.Dockerfile
+    container_name: lol_serving
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://${DATA_POSTGRES_USER}:${DATA_POSTGRES_PASSWORD}@data-postgres:5432/data_db
+      - REDIS_URL=redis://lol-redis:6379/0
+      - MLFLOW_TRACKING_URI=http://lol-mlflow:5000
+      - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - AWS_DEFAULT_REGION=us-east-1
+
+      # 나중에 RIOT API KEY 추가
+      #- RIOT_API_KEY=${RIOT_API_KEY}
+
+    volumes:
+      - ./serving:/app/serving
+      - ./shared_modules:/app/shared_modules
+
+    depends_on:
+      data-postgres:
+        condition: service_healthy
+      lol-redis:
+        condition: service_healthy
+      lol-mlflow:
+        condition: service_started
+
+    # [GPU 설정] 호스트의 NVIDIA GPU 사용
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    networks:
+      - lol-network
+      - proxy-net
   # ----------------------------------------------------
   # Nginx 리버스 프록시
   # ----------------------------------------------------
@@ -507,6 +574,7 @@ services:
 volumes:
   postgres-db-volume:
   data-postgres-volume:
+  redis_data:
 
 networks:
   lol-network:
