@@ -67,10 +67,12 @@ class MatchRepository:
             replace_index=["match_id", "puuid"],
         )
 
-    def upsert_masteries(self, puuid: str, mastery_list: List[Dict]):
+    def upsert_masteries(self, puuid: str, mastery_list):
         """
         mastery_list: Riot API champion-mastery-v4 결과(JSON 배열)
+        전체 챔피언 숙련도 저장 (빠른 배치 + 값 변경 시에만 UPDATE)
         """
+
         rows = [
             (
                 puuid,
@@ -81,6 +83,7 @@ class MatchRepository:
             )
             for m in mastery_list
         ]
+
         if not rows:
             return
 
@@ -89,7 +92,7 @@ class MatchRepository:
         puuid, champion_id, champion_level,
         champion_points, tokens_earned
         )
-        VALUES (%s, %s, %s, %s, %s)
+        VALUES %s
         ON CONFLICT (puuid, champion_id) DO UPDATE
         SET champion_level  = EXCLUDED.champion_level,
             champion_points = EXCLUDED.champion_points,
@@ -99,10 +102,11 @@ class MatchRepository:
         OR champion_masteries.champion_points IS DISTINCT FROM EXCLUDED.champion_points
         OR champion_masteries.tokens_earned   IS DISTINCT FROM EXCLUDED.tokens_earned;
         """
+
         conn = self.pg.get_conn()
         with conn:
             with conn.cursor() as cur:
-                cur.executemany(sql, rows)
+                execute_values(cur, sql, rows, page_size=200)
 
     def get_existing_match_ids(self, match_ids: List[str]) -> set[str]:
         """
