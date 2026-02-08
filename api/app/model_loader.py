@@ -1,18 +1,42 @@
-import random
+from __future__ import annotations
 
-class MockLoLModel:
-    def __init__(self):
-        print(" [Mock] 가상의 승률 예측 모델을 초기화합니다...")
+import json
+import os
+from typing import Any, Dict
 
-    def predict(self, input_data):
-        """
-        input_data: PyG Data 객체 혹은 전처리된 텐서 (현재는 무시)
-        return: 0.0 ~ 1.0 사이의 확률 (스칼라)
-        """
-        # 실제 추론 대신 랜덤값 반환 (테스트용)
-        fake_prob = 0.4 + (random.random() * 0.2) # 0.4 ~ 0.6 사이
-        return fake_prob
 
-def load_model():
-    # 나중에는 여기서 mlflow.pyfunc.load_model()을 호출
-    return MockLoLModel()
+def _safe_read_json(path: str) -> Dict[str, Any]:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def load_artifacts_meta(artifact_dir: str) -> Dict[str, Any]:
+    """
+    Load minimal metadata for /meta endpoint.
+    This is NOT responsible for loading model weights.
+    """
+    config_path_candidates = [
+        os.path.join(artifact_dir, "config", "config.json"),
+        os.path.join(artifact_dir, "config.json"),
+        os.path.join("config", "config.json"),
+        "config.json",
+    ]
+    config_data: Dict[str, Any] = {}
+    for p in config_path_candidates:
+        if os.path.exists(p):
+            config_data = _safe_read_json(p)
+            break
+
+    meta = {
+        "model": {
+            "experiment": config_data.get("experiment_name", "LoL_Win_Prediction_v1"),
+            "run_name": config_data.get("run_name", "unknown"),
+            "data_version": config_data.get("data_version", "unknown"),
+            "artifact_dir": artifact_dir,
+        },
+        "config_present": bool(config_data),
+    }
+    return meta
