@@ -4,3 +4,6 @@ airflow/
 ds_env/
 minio/
 notebooks/
+
+__pycache__/
+*.pyc
