@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from typing import Any, Dict, List, Tuple, Optional
 import traceback
+from mlflow.tracking import MlflowClient
 
 from .schemas import (
     SpectatorPredictRequest,
@@ -21,21 +22,67 @@ from . import db
 ml_models = {}
 
 
+def get_production_run_id(experiment_name: str) -> str:
+    """MLflow를 검색하여 status 태그가 production인 가장 최신 모델의 run_id를 찾습니다."""
+    client = MlflowClient()
+
+    # 1. 실험(Experiment) ID 찾기
+    experiment = client.get_experiment_by_name(experiment_name)
+    if experiment is None:
+        raise ValueError(f"❌ MLflow에서 '{experiment_name}' 실험을 찾을 수 없습니다.")
+
+    # 2. 조건(태그)으로 Run 검색 (최신순 정렬)
+    # 검색 조건: tags.status 가 'production' 인 것
+    query = "tags.status = 'production'"
+    runs = client.search_runs(
+        experiment_ids=[experiment.experiment_id],
+        filter_string=query,
+        order_by=["start_time DESC"],  # 가장 최근에 production으로 지정된 것 1개
+        max_results=1
+    )
+
+    if not runs:
+        raise ValueError(f"❌ '{experiment_name}' 실험에서 '{query}' 태그를 가진 모델이 없습니다.")
+
+    # 3. 찾은 run_id 반환
+    return runs[0].info.run_id
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    artifact_dir = os.getenv("ARTIFACT_DIR", "artifacts")
-    device = os.getenv("DEVICE", "cpu")  # keep CPU default for safety
+    # 환경변수에서 설정값 가져오기
+    device = os.getenv("DEVICE", "cpu")
+    experiment_name = os.getenv("MLFLOW_EXPERIMENT_NAME", "LoL_Win_Prediction_v1")
 
-    # Initialize Postgres cache (optional). Set POSTGRES_DSN to enable.
-    db.init_db(os.getenv('POSTGRES_DSN'))
+    # (선택) DB 초기화
+    # db.init_db(os.getenv('POSTGRES_DSN'))
 
-    predictor = LoLPredictor(artifact_dir=artifact_dir, device=device)
-    ml_models["predictor"] = predictor
-    ml_models["meta"] = load_artifacts_meta(artifact_dir)
+    try:
+        # ★ MLflow 검색을 통해 Production 모델의 run_id 획득 ★
+        print(f"🔍 MLflow에서 '{experiment_name}'의 Production 모델을 검색 중...")
+        run_id = get_production_run_id(experiment_name)
+        print(f"🎯 Production 모델 발견! (Run ID: {run_id})")
 
-    print(f"✅ Predictor ready (artifact_dir={artifact_dir}, device={device})")
+        # 찾은 run_id를 Predictor에 넘겨서 다운로드 및 로드 수행
+        predictor = LoLPredictor(run_id=run_id, device=device)
+        ml_models["predictor"] = predictor
+
+        ml_models["meta"] = {
+            "model": {
+                "experiment": experiment_name,
+                "run_id": run_id,
+            },
+            "status": "production"
+        }
+        print(f"✅ Predictor 서빙 준비 완료")
+
+    except Exception as e:
+        print(f"🚨 모델 로드 실패: {e}")
+        # 실패하더라도 서버는 띄우려면 여기서 멈추지 않고 Mock으로 넘기거나 에러 처리
+        pass
+
     yield
-    db.close_db()
+    # db.close_db()
     ml_models.clear()
 
 

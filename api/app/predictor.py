@@ -1,100 +1,106 @@
-from __future__ import annotations
-
 import os
-from typing import Any, Optional
+import sys
+import json
+import torch
+import mlflow.tracking
+import tempfile
 
 class LoLPredictor:
-    """
-    Model inference wrapper.
+    def __init__(self, run_id: str, device: str = "cpu"):
+        self.device = torch.device(device)
+        client = mlflow.tracking.MlflowClient()
 
-    - Loads model weights from artifacts directory (model.pth)
-    - Handles Batch size = 1 by wrapping into PyG Batch when available
-    - Returns win rate (float) for team 100
-    """
+        # ---------------------------------------------------------
+        # 1. Artifact 다운로드
+        # ---------------------------------------------------------
+        temp_dir = tempfile.mkdtemp()
 
-    def __init__(self, artifact_dir: str = "artifacts", device: str = "cpu"):
-        self.artifact_dir = artifact_dir
-        self.device = device
-        self.model = self._load_model()
+        # ★ 수정된 부분: path="" 로 변경하여 전체 아티팩트 폴더를 temp_dir로 다운로드
+        local_path = client.download_artifacts(run_id, path="", dst_path=temp_dir)
 
-    def _load_model(self):
-        # Skeleton:
-        # - Real implementation should reconstruct architecture from config.json
-        # - Then load state_dict from model.pth
-        model_path_candidates = [
-            os.path.join(self.artifact_dir, "model", "data", "model.pth"),
-            os.path.join(self.artifact_dir, "model.pth"),
-            os.path.join("model.pth"),
-        ]
-        model_path = next((p for p in model_path_candidates if os.path.exists(p)), None)
+        # (2) 코드 파일 다운로드 및 경로 설정
+        code_path = os.path.join(local_path, "code")
 
+        # ---------------------------------------------------------
+        # 2. 동적 임포트 (Dynamic Import)
+        # ---------------------------------------------------------
+        # 파이썬이 다운로드 받은 code 폴더를 바라보게 만듦
+        if code_path not in sys.path:
+            sys.path.append(code_path)
+
+        # ★ 이제 마치 내 프로젝트에 있는 것처럼 import 가능!
         try:
-            import torch  # type: ignore
-        except Exception:
-            # No torch -> fallback to mock
-            return _MockModel()
+            from model import LoLGNN  # 다운로드 받은 model.py에서 import
+        except ImportError as e:
+            raise RuntimeError(f"모델 코드를 불러올 수 없습니다: {e}")
 
-        if model_path is None:
-            return _MockModel()
+        # ---------------------------------------------------------
+        # 3. 모델 초기화
+        # ---------------------------------------------------------
+        config_path = os.path.join(local_path, "config", "config.json")
+        with open(config_path, 'r') as f:
+            self.config = json.load(f)
 
-        # TODO(DS): replace with real model class and config-based init
-        # For now, load a scripted/torch.nn.Module if provided
+        # 저장된 코드로 모델 객체 생성
+        self.model = LoLGNN(self.config)
+
+        # 가중치 로드
+        weight_path = os.path.join(local_path, "model", "data", "model.pth")
+        self.model.load_state_dict(torch.load(weight_path, map_location=self.device))
+        self.model.to(self.device)
+        self.model.eval()
+
+        print("✅ MLflow에서 코드와 모델을 성공적으로 불러왔습니다.")
+
+    def _load_model(self, artifact_dir):
+        # 1. Config 로드 (하이퍼파라미터용)
+        config_path = os.path.join(artifact_dir, "config", "config.json")
         try:
-            obj = torch.load(model_path, map_location="cpu")
-            if hasattr(obj, "eval"):
-                obj.eval()
-            return obj
-        except Exception:
-            return _MockModel()
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+        except:
+            config = {}  # Fallback
 
-    def predict_team100_win_rate(self, graph_data: Any) -> float:
-        # If we're in mock mode
-        if isinstance(self.model, _MockModel):
-            return float(self.model.predict(graph_data))
+        model_path = os.path.join(artifact_dir, "model", "data", "model.pth")
 
-        import torch  # type: ignore
-
-        # Move model to device if possible
+        # 2. 모델 아키텍처 초기화 (User Model Spec에 맞게)
+        # 예시: HeteroGNN 클래스 생성
         try:
-            self.model.to(self.device)
-        except Exception:
-            pass
+            model = LoLGNN(
+                hidden_channels=config.get("hidden_dim", 64),
+                out_channels=1
+            )
 
-        # Handle PyG Batch dimension for single sample
-        batch_obj = graph_data
-        try:
-            from torch_geometric.data import Batch  # type: ignore
-            batch_obj = Batch.from_data_list([graph_data])
-        except Exception:
-            # Not a PyG graph, try to add batch dimension if it's a tensor-like input
-            if hasattr(graph_data, "unsqueeze"):
-                batch_obj = graph_data.unsqueeze(0)
+            # 3. 가중치 로드
+            state_dict = torch.load(model_path, map_location=self.device)
+            model.load_state_dict(state_dict)
+            model.to(self.device)
+            model.eval()
+            return model
+        except Exception as e:
+            print(f"Model Load Failed: {e}")
+            return None
 
-        # Move to device if supported
-        try:
-            batch_obj = batch_obj.to(self.device)
-        except Exception:
-            pass
+    def predict(self, spectator_payload: dict, enrichment_payload: dict) -> float:
+        if self.model is None:
+            return 0.5
 
+        # 1. 전처리 (JSON -> HeteroData)
+        data = convert_spectator_to_graph(spectator_payload, enrichment_payload)
+
+        # 2. Device 이동
+        data = data.to(self.device)
+
+        # 3. Batch Dimension 추가 (GNN 모델이 배치를 요구할 경우)
+        # PyG의 경우 단일 그래프도 모델에 바로 넣을 수 있는 경우가 많지만,
+        # Batch 객체로 만들어주는 것이 안전합니다.
+        from torch_geometric.data import Batch
+        batch = Batch.from_data_list([data])
+
+        # 4. 추론
         with torch.no_grad():
-            out = self.model(batch_obj)
+            logits = self.model(batch.x_dict, batch.edge_index_dict)  # 모델 forward signature에 따라 다름
+            # 또는 logits = self.model(batch) 
 
-            # Common patterns:
-            # - out is a single logit tensor shape [1] or [1,1]
-            # - apply sigmoid to get probability
-            if hasattr(torch, "sigmoid"):
-                prob = torch.sigmoid(out)
-            else:
-                prob = out
-
-            # Extract scalar
-            if hasattr(prob, "item"):
-                return float(prob.item())
-
-            # Fallback conversion
-            return float(prob)
-
-class _MockModel:
-    def predict(self, _input: Any) -> float:
-        # deterministic-ish mock
-        return 0.5
+            prob = torch.sigmoid(logits).item()
+            return prob

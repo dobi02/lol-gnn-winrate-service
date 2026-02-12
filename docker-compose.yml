@@ -516,10 +516,12 @@ services:
       - REDIS_URL=redis://lol-redis:6379/0
       - MLFLOW_TRACKING_URI=http://lol-mlflow:5000
       - MLFLOW_S3_ENDPOINT_URL=http://lol-minio:9000
+      - MLFLOW_S3_IGNORE_TLS=true
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
       - AWS_DEFAULT_REGION=us-east-1
       - RIOT_API_KEY=${RIOT_API_KEY}
+      - MLFLOW_EXPERIMENT_NAME=${MLFLOW_EXPERIMENT_NAME}
     volumes:
       - ./api/app:/app/app   # 코드 수정 시 Hot Reload 지원
     depends_on:

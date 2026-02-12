@@ -53,9 +53,9 @@ class RiotClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        timeout_s: float = 10.0,
-        max_retries: int = 2,
-        backoff_s: float = 0.5,
+        timeout_s: float = 15.0,
+        max_retries: int = 3,
+        backoff_s: float = 2,
     ):
         self.api_key = api_key or os.getenv("RIOT_API_KEY", "")
         if not self.api_key:
@@ -125,6 +125,16 @@ class RiotClient:
     def get_champion_mastery_by_summoner_id(self, platform_id: str, encrypted_summoner_id: str) -> List[Dict[str, Any]]:
         routing = _routing_for_platform(platform_id)
         url = f"{routing.platform_host}/lol/champion-mastery/v4/champion-masteries/by-summoner/{encrypted_summoner_id}"
+        return self._get(url)
+
+    def get_active_game_by_puuid(self, platform_id: str, puuid: str) -> Dict[str, Any]:
+        routing = _routing_for_platform(platform_id)
+        url = f"{routing.platform_host}/lol/spectator/v5/active-games/by-summoner/{puuid}"
+        return self._get(url)
+
+    def get_champion_mastery_by_puuid(self, platform_id: str, puuid: str) -> List[Dict[str, Any]]:
+        routing = _routing_for_platform(platform_id)
+        url = f"{routing.platform_host}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}"
         return self._get(url)
 
 

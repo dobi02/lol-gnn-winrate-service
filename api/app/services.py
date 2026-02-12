@@ -62,16 +62,10 @@ async def fetch_spectator_and_enrichment_from_riot_id(
     if not puuid:
         raise RuntimeError("Failed to resolve puuid from riot_id")
 
-    # 1.5) puuid -> summonerId (encrypted id)
-    summoner = client.get_summoner_by_puuid(platform_id=platform_id, puuid=puuid)
-    encrypted_summoner_id = summoner.get("id")
-    if not encrypted_summoner_id:
-        raise RuntimeError("Failed to resolve encrypted summoner id")
-
     # 2) active game
     try:
-        spectator_payload = client.get_active_game_by_summoner_id(
-            platform_id=platform_id, encrypted_summoner_id=encrypted_summoner_id
+        spectator_payload = client.get_active_game_by_puuid(
+            platform_id=platform_id, puuid=puuid
         )
     except RiotAPIError as e:
         if e.status_code == 404:
@@ -120,7 +114,7 @@ async def fetch_spectator_and_enrichment_from_riot_id(
 
             if p_summoner_id:
                 try:
-                    mastery_list = client.get_champion_mastery_by_summoner_id(platform_id=platform_id, encrypted_summoner_id=p_summoner_id)
+                    mastery_list = client.get_champion_mastery_by_puuid(platform_id=platform_id, puuid=p_puuid)
                     # compress to championId -> championPoints
                     mastery = {
                         "champion_points": {str(m.get("championId")): m.get("championPoints") for m in mastery_list if m.get("championId") is not None}
