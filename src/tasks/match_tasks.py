@@ -153,42 +153,14 @@ def save_all_to_postgres(**kwargs):
 
     print(f"{len(matches_json)}개 경기 저장 완료")
 
-def save_champion_mastery(**kwargs):
-    ti = kwargs["ti"]
-    matches_json = ti.xcom_pull(task_ids="fetch_recent_matches")
+    # 2. Save Mastery data (TODO: implement get_champion_masteries)
+    # Currently commented out to prevent errors
+    # puuid_set = {
+    #     p["puuid"]
+    #     for m in matches_json
+    #     for p in m["info"]["participants"]
+    # }
 
-    if not matches_json:
-        print("[save_champion_masteries] No matches_json. Skip.")
-        return
-
-    http = HttpClient()
-    api = RiotAPI(http)
-
-    PG_CONN_ID = "data_postgres_connection"
-    repo = MatchRepository(conn_id=PG_CONN_ID)
-
-    # 1) match에서 실제 사용한 (puuid, championId)만 수집
-    pairs = set()
-    for m in matches_json:
-        for p in m["info"]["participants"]:
-            puuid = p.get("puuid")
-            champ = p.get("championId")
-            if puuid and champ is not None:
-                pairs.add((puuid, int(champ)))
-
-    print(f"[save_champion_masteries] unique (puuid,champ) pairs = {len(pairs)}")
-
-    # 2) (puuid, championId) 단건 mastery 조회 후 저장
-    for puuid, champ_id in pairs:
-        try:
-            mastery = api.champion_mastery_by_puuid_and_champion(puuid, champ_id)
-        except Exception as e:
-            print(f"[WARN] mastery fetch failed puuid={puuid[:8]} champ={champ_id}: {e}")
-            continue
-
-        if not mastery:
-            continue
-
-        repo.upsert_mastery_one(puuid, champ_id, mastery)
-
-    print("[save_champion_masteries] done")
+    # for puuid in puuid_set:
+    #     mastery_list = api.get_champion_masteries(puuid)
+    #     repo.upsert_masteries(puuid, mastery_list)

@@ -12,9 +12,6 @@ except ImportError:
 REGION = os.environ.get("RIOT_REGION", "asia")
 BASE_REGIONAL = f"https://{REGION}.api.riotgames.com"
 
-PLATFORM = os.environ.get("RIOT_PLATFORM", "kr")  # 숙련도 추출용 api: riot v4
-BASE_PLATFORM = f"https://{PLATFORM}.api.riotgames.com"
-
 # Solo Rank Queue ID
 QUEUE_SOLO = 420
 
