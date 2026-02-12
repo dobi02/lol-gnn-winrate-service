@@ -4,6 +4,7 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from typing import Any, Dict, List, Tuple, Optional
+import traceback
 
 from .schemas import (
     SpectatorPredictRequest,
@@ -106,6 +107,10 @@ async def predict_deprecated():
 
 def _map_upstream_errors_to_http(e: Exception) -> HTTPException:
     """1~4 단계에서 발생하는 업스트림(Riot/DB) 오류를 HTTPException으로 매핑."""
+
+    print("❌ [DEBUG] Upstream Error Caught:")
+    traceback.print_exc()
+
     msg = str(e)
     if "riot_id must be in" in msg:
         return HTTPException(status_code=422, detail=msg)
