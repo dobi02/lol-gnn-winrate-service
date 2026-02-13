@@ -95,18 +95,18 @@ def get_mastery(puuid: str) -> Optional[Dict[str, Any]]:
         return row[0] if row else None
 """
 
-def upsert_mastery(puuid: str, data: Dict[str, Any]) -> None:
-    if _CONN is None:
-        return
-    payload = dict(data)
-    payload.setdefault("fetched_at", datetime.now(timezone.utc).isoformat())
-    with _CONN.cursor() as cur:
-        cur.execute(
-            """
-            INSERT INTO player_mastery_cache (puuid, data, updated_at)
-            VALUES (%s, %s, NOW())
-            ON CONFLICT (puuid) DO UPDATE
-            SET data = EXCLUDED.data, updated_at = NOW()
-            """,
-            (puuid, Json(payload)),
-        )
+# def upsert_mastery(puuid: str, data: Dict[str, Any]) -> None:
+#     if _CONN is None:
+#         return
+#     payload = dict(data)
+#     payload.setdefault("fetched_at", datetime.now(timezone.utc).isoformat())
+#     with _CONN.cursor() as cur:
+#         cur.execute(
+#             """
+#             INSERT INTO player_mastery_cache (puuid, data, updated_at)
+#             VALUES (%s, %s, NOW())
+#             ON CONFLICT (puuid) DO UPDATE
+#             SET data = EXCLUDED.data, updated_at = NOW()
+#             """,
+#             (puuid, Json(payload)),
+#         )

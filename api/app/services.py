@@ -100,32 +100,32 @@ async def fetch_spectator_and_enrichment_from_riot_id(
         enrichment.history_matches_by_puuid[p_puuid] = hist
 
         # Mastery cache (optional; requires summonerId)
-        mastery = db.get_mastery(p_puuid)
-        if mastery is None:
-            # try get summonerId from spectator participant payload first
-            p_summoner_id = p.get("summonerId")
-            if not p_summoner_id:
-                # resolve via summoner-v4 by puuid
-                try:
-                    s = client.get_summoner_by_puuid(platform_id=platform_id, puuid=p_puuid)
-                    p_summoner_id = s.get("id")
-                except Exception:
-                    p_summoner_id = None
-
-            if p_summoner_id:
-                try:
-                    mastery_list = client.get_champion_mastery_by_puuid(platform_id=platform_id, puuid=p_puuid)
-                    # compress to championId -> championPoints
-                    mastery = {
-                        "champion_points": {str(m.get("championId")): m.get("championPoints") for m in mastery_list if m.get("championId") is not None}
-                    }
-                    db.upsert_mastery(p_puuid, mastery)
-                except Exception as e:
-                    warnings.append(f"mastery fetch failed for puuid={p_puuid[:8]}...: {type(e).__name__}")
-                    mastery = {"champion_points": {}}
-            else:
-                mastery = {"champion_points": {}}
-
-        enrichment.champ_mastery_by_puuid[p_puuid] = mastery
+        # mastery = db.get_mastery(p_puuid)
+        # if mastery is None:
+        #     # try get summonerId from spectator participant payload first
+        #     p_summoner_id = p.get("summonerId")
+        #     if not p_summoner_id:
+        #         # resolve via summoner-v4 by puuid
+        #         try:
+        #             s = client.get_summoner_by_puuid(platform_id=platform_id, puuid=p_puuid)
+        #             p_summoner_id = s.get("id")
+        #         except Exception:
+        #             p_summoner_id = None
+        #
+        #     if p_summoner_id:
+        #         try:
+        #             mastery_list = client.get_champion_mastery_by_puuid(platform_id=platform_id, puuid=p_puuid)
+        #             # compress to championId -> championPoints
+        #             mastery = {
+        #                 "champion_points": {str(m.get("championId")): m.get("championPoints") for m in mastery_list if m.get("championId") is not None}
+        #             }
+        #             db.upsert_mastery(p_puuid, mastery)
+        #         except Exception as e:
+        #             warnings.append(f"mastery fetch failed for puuid={p_puuid[:8]}...: {type(e).__name__}")
+        #             mastery = {"champion_points": {}}
+        #     else:
+        #         mastery = {"champion_points": {}}
+        #
+        # enrichment.champ_mastery_by_puuid[p_puuid] = mastery
 
     return spectator_payload, enrichment, warnings

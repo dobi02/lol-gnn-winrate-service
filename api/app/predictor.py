@@ -4,6 +4,8 @@ import json
 import torch
 import mlflow.tracking
 import tempfile
+from torch_geometric.data import Batch, HeteroData
+
 
 class LoLPredictor:
     def __init__(self, run_id: str, device: str = "cpu"):
@@ -14,34 +16,37 @@ class LoLPredictor:
         # 1. Artifact 다운로드
         # ---------------------------------------------------------
         temp_dir = tempfile.mkdtemp()
-
-        # ★ 수정된 부분: path="" 로 변경하여 전체 아티팩트 폴더를 temp_dir로 다운로드
+        # 전체 아티팩트를 다운로드 (model.py, model_utils.py, config 등 포함)
         local_path = client.download_artifacts(run_id, path="", dst_path=temp_dir)
-
-        # (2) 코드 파일 다운로드 및 경로 설정
         code_path = os.path.join(local_path, "code")
 
         # ---------------------------------------------------------
         # 2. 동적 임포트 (Dynamic Import)
         # ---------------------------------------------------------
-        # 파이썬이 다운로드 받은 code 폴더를 바라보게 만듦
+        # model.py와 model_utils.py가 있는 경로를 sys.path에 추가
         if code_path not in sys.path:
             sys.path.append(code_path)
 
-        # ★ 이제 마치 내 프로젝트에 있는 것처럼 import 가능!
         try:
-            from model import LoLGNN  # 다운로드 받은 model.py에서 import
+            # model.py에서 LoLGNN 클래스 로드
+            from model import LoLGNN
         except ImportError as e:
-            raise RuntimeError(f"모델 코드를 불러올 수 없습니다: {e}")
+            raise RuntimeError(f"모델 코드를 불러올 수 없습니다. model_utils.py 등이 포함되었는지 확인해주세요: {e}")
 
         # ---------------------------------------------------------
         # 3. 모델 초기화
         # ---------------------------------------------------------
         config_path = os.path.join(local_path, "config", "config.json")
-        with open(config_path, 'r') as f:
-            self.config = json.load(f)
+        try:
+            with open(config_path, 'r') as f:
+                self.config = json.load(f)
+        except FileNotFoundError:
+            # 경로가 다를 경우를 대비한 예비 경로 (artifacts 구조에 따라 다를 수 있음)
+            config_path = os.path.join(local_path, "config.json")
+            with open(config_path, 'r') as f:
+                self.config = json.load(f)
 
-        # 저장된 코드로 모델 객체 생성
+        # 모델 인스턴스 생성
         self.model = LoLGNN(self.config)
 
         # 가중치 로드
@@ -52,55 +57,35 @@ class LoLPredictor:
 
         print("✅ MLflow에서 코드와 모델을 성공적으로 불러왔습니다.")
 
-    def _load_model(self, artifact_dir):
-        # 1. Config 로드 (하이퍼파라미터용)
-        config_path = os.path.join(artifact_dir, "config", "config.json")
-        try:
-            with open(config_path, 'r') as f:
-                config = json.load(f)
-        except:
-            config = {}  # Fallback
-
-        model_path = os.path.join(artifact_dir, "model", "data", "model.pth")
-
-        # 2. 모델 아키텍처 초기화 (User Model Spec에 맞게)
-        # 예시: HeteroGNN 클래스 생성
-        try:
-            model = LoLGNN(
-                hidden_channels=config.get("hidden_dim", 64),
-                out_channels=1
-            )
-
-            # 3. 가중치 로드
-            state_dict = torch.load(model_path, map_location=self.device)
-            model.load_state_dict(state_dict)
-            model.to(self.device)
-            model.eval()
-            return model
-        except Exception as e:
-            print(f"Model Load Failed: {e}")
-            return None
-
-    def predict(self, spectator_payload: dict, enrichment_payload: dict) -> float:
+    def predict_team100_win_rate(self, data: HeteroData) -> float:
+        """
+        API에서 호출하는 메서드입니다.
+        model.py의 forward(x_dict, edge_index_dict, batch_dict) 시그니처에 맞춰 데이터를 가공합니다.
+        """
         if self.model is None:
             return 0.5
 
-        # 1. 전처리 (JSON -> HeteroData)
-        data = convert_spectator_to_graph(spectator_payload, enrichment_payload)
-
-        # 2. Device 이동
+        # 1. Device 이동
         data = data.to(self.device)
 
-        # 3. Batch Dimension 추가 (GNN 모델이 배치를 요구할 경우)
-        # PyG의 경우 단일 그래프도 모델에 바로 넣을 수 있는 경우가 많지만,
-        # Batch 객체로 만들어주는 것이 안전합니다.
-        from torch_geometric.data import Batch
+        # 2. Batch 객체 생성 (단일 그래프라도 Batch로 감싸야 batch vector가 생성됨)
         batch = Batch.from_data_list([data])
+
+        # 3. 인자 준비 (model.py의 요구사항)
+        # HeteroData Batch 객체는 x_dict, edge_index_dict 속성을 가집니다.
+        x_dict = batch.x_dict
+        edge_index_dict = batch.edge_index_dict
+
+        # ★ 중요: batch_dict 생성 ★
+        # model.py의 global_mean_pool(x_dict['player'], batch_dict['player'])를 위해 필요
+        batch_dict = {}
+        for node_type in batch.node_types:
+            batch_dict[node_type] = batch[node_type].batch
 
         # 4. 추론
         with torch.no_grad():
-            logits = self.model(batch.x_dict, batch.edge_index_dict)  # 모델 forward signature에 따라 다름
-            # 또는 logits = self.model(batch) 
-
+            # forward(self, x_dict, edge_index_dict, batch_dict) 호출
+            logits = self.model(x_dict, edge_index_dict, batch_dict)
             prob = torch.sigmoid(logits).item()
-            return prob
+
+        return prob

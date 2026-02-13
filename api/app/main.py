@@ -236,27 +236,108 @@ async def predict_and_format_response_or_raise(
 
 
 # ---- 기존 엔드포인트는 아래처럼 “두 함수”를 호출만 하도록 얇게 만들면 됩니다. ----
+# @app.post("/predict/from-discord", response_model=DiscordPredictResponse)
+# async def predict_from_discord(request: DiscordPredictRequest):
+#     predictor: LoLPredictor = ml_models.get("predictor")
+#     if predictor is None:
+#         raise HTTPException(status_code=503, detail="Model is not ready")
+#
+#     # (1~4)
+#     spectator_payload, enrichment, warnings = await resolve_spectator_and_enrichment_or_raise(
+#         riot_id=request.riot_id,
+#         platform_id=request.platform_id,
+#         use_history=request.use_history,
+#         history_count=request.history_count,
+#     )
+#
+#     # (5~6)
+#     meta = ml_models.get("meta")
+#     return await predict_and_format_response_or_raise(
+#         predictor=predictor,
+#         spectator_payload=spectator_payload,
+#         enrichment=enrichment,
+#         warnings=warnings,
+#         request_platform_id=request.platform_id,
+#         meta=meta,
+#     )
+
+
+#디버깅용 코드
 @app.post("/predict/from-discord", response_model=DiscordPredictResponse)
 async def predict_from_discord(request: DiscordPredictRequest):
+    print(f"🚀 [DEBUG] 1. 요청 시작: {request.riot_id}", flush=True)
+
     predictor: LoLPredictor = ml_models.get("predictor")
     if predictor is None:
         raise HTTPException(status_code=503, detail="Model is not ready")
 
-    # (1~4)
-    spectator_payload, enrichment, warnings = await resolve_spectator_and_enrichment_or_raise(
-        riot_id=request.riot_id,
-        platform_id=request.platform_id,
-        use_history=request.use_history,
-        history_count=request.history_count,
-    )
+    try:
+        # (1~4) Riot API 호출 단계
+        print("🚀 [DEBUG] 2. Riot API 데이터 조회 시작...", flush=True)
+        spectator_payload, enrichment, warnings = await resolve_spectator_and_enrichment_or_raise(
+            riot_id=request.riot_id,
+            platform_id=request.platform_id,
+            use_history=request.use_history,
+            history_count=request.history_count,
+        )
+        print("✅ [DEBUG] 3. Riot API 데이터 조회 성공!", flush=True)
 
-    # (5~6)
-    meta = ml_models.get("meta")
-    return await predict_and_format_response_or_raise(
-        predictor=predictor,
-        spectator_payload=spectator_payload,
-        enrichment=enrichment,
-        warnings=warnings,
-        request_platform_id=request.platform_id,
-        meta=meta,
-    )
+        # Spectator 확인
+        print(f"   -> Spectator Keys: {list(spectator_payload.keys())}", flush=True)
+
+        # ★★★ 여기가 의심 지점입니다 ★★★
+        # enrichment가 None인지, dict인지 타입부터 확인합니다.
+        print(f"🔍 [DEBUG] Enrichment 타입 확인: {type(enrichment)}", flush=True)
+        print(f"🔍 [DEBUG] Enrichment 값 확인: {enrichment}", flush=True)
+
+        # Pydantic 모델인지 확인 후 dict로 변환하여 로깅
+        if hasattr(enrichment, "model_dump"):
+            enrichment_dict = enrichment.model_dump()
+            print(f"   -> Enrichment Keys: {list(enrichment_dict.keys())}", flush=True)
+        elif isinstance(enrichment, dict):
+            print(f"   -> Enrichment Keys: {list(enrichment.keys())}", flush=True)
+        else:
+            print(f"⚠️ [WARN] Enrichment가 알 수 없는 타입입니다: {type(enrichment)}", flush=True)
+
+        # (5~6) 모델 입력 변환 및 추론 단계
+        print("🚀 [DEBUG] 4. 모델 입력 데이터 변환 및 추론 시작...", flush=True)
+
+        # 4-1. Spectator 객체 변환
+        spectator_obj = SpectatorPredictRequest(spectator=spectator_payload, enrichment=enrichment).spectator
+        print("   -> [4-1] Spectator 객체 변환 완료", flush=True)
+
+        # 4-2. 그래프 변환
+        graph_obj, more_warnings = await build_model_input_from_spectator(spectator_obj, enrichment=enrichment)
+        print("   -> [4-2] 그래프(GNN Input) 변환 완료", flush=True)
+        warnings.extend(more_warnings)
+
+        # 4-3. 추론
+        win100 = predictor.predict_team100_win_rate(graph_obj)
+        print(f"   -> [4-3] 모델 추론 완료: WinRate100={win100}", flush=True)
+
+        win100 = float(win100)
+        win200 = float(max(0.0, min(1.0, 1.0 - win100)))
+
+        meta = ml_models.get("meta")
+
+        print("✅ [DEBUG] 5. 모든 과정 성공! 응답 반환", flush=True)
+        return DiscordPredictResponse(
+            win_rate_team_100=win100,
+            win_rate_team_200=win200,
+            model=meta,
+            warnings=warnings,
+            game_id=int(spectator_payload.get("gameId")) if spectator_payload.get("gameId") is not None else None,
+            platform_id=str(spectator_payload.get("platformId")) if spectator_payload.get(
+                "platformId") is not None else request.platform_id,
+        )
+
+    except HTTPException as http_exc:
+        print(f"⚠️ [DEBUG] HTTP 예외 발생: {http_exc.detail}", flush=True)
+        raise http_exc
+    except Exception as e:
+        # Traceback을 문자열로 받아서 강제로 찍어버립니다.
+        error_msg = traceback.format_exc()
+        print("\n🚨🚨🚨 [CRITICAL ERROR - FULL TRACEBACK] 🚨🚨🚨", flush=True)
+        print(error_msg, flush=True)
+        print("---------------------------------------------------------------", flush=True)
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

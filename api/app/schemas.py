@@ -75,7 +75,7 @@ class EnrichmentPayload(_Base):
     """
     use_history: bool = False
     history_matches_by_puuid: Dict[str, Any] = {}
-    champ_mastery_by_puuid: Dict[str, Any] = {}
+    # champ_mastery_by_puuid: Dict[str, Any] = {}
 
 
 class RequestContext(_Base):

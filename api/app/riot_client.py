@@ -122,20 +122,20 @@ class RiotClient:
         return self._get(url)
 
     # Champion mastery (by summoner id)
-    def get_champion_mastery_by_summoner_id(self, platform_id: str, encrypted_summoner_id: str) -> List[Dict[str, Any]]:
-        routing = _routing_for_platform(platform_id)
-        url = f"{routing.platform_host}/lol/champion-mastery/v4/champion-masteries/by-summoner/{encrypted_summoner_id}"
-        return self._get(url)
+    # def get_champion_mastery_by_summoner_id(self, platform_id: str, encrypted_summoner_id: str) -> List[Dict[str, Any]]:
+    #     routing = _routing_for_platform(platform_id)
+    #     url = f"{routing.platform_host}/lol/champion-mastery/v4/champion-masteries/by-summoner/{encrypted_summoner_id}"
+    #     return self._get(url)
 
     def get_active_game_by_puuid(self, platform_id: str, puuid: str) -> Dict[str, Any]:
         routing = _routing_for_platform(platform_id)
         url = f"{routing.platform_host}/lol/spectator/v5/active-games/by-summoner/{puuid}"
         return self._get(url)
 
-    def get_champion_mastery_by_puuid(self, platform_id: str, puuid: str) -> List[Dict[str, Any]]:
-        routing = _routing_for_platform(platform_id)
-        url = f"{routing.platform_host}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}"
-        return self._get(url)
+    # def get_champion_mastery_by_puuid(self, platform_id: str, puuid: str) -> List[Dict[str, Any]]:
+    #     routing = _routing_for_platform(platform_id)
+    #     url = f"{routing.platform_host}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}"
+    #     return self._get(url)
 
 
 def parse_riot_id(riot_id: str) -> Tuple[str, str]:
