@@ -5,6 +5,8 @@ from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.hooks.base import BaseHook
 from airflow.models.param import Param
 from airflow.sdk import Variable, dag, task
+from docker.types import Mount
+
 
 
 @dag(
@@ -70,6 +72,13 @@ def lol_gnn_train_and_gate():
         network_mode="{{ ti.xcom_pull(task_ids='runtime_config')['network_mode'] }}",
         auto_remove="success",
         mount_tmp_dir=False,
+        mounts=[
+            Mount(
+                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                target="/workspace/src/training",
+                type="bind",
+            ),
+        ],
         environment={
             "DB_USER": "{{ ti.xcom_pull(task_ids='runtime_config')['db_user'] }}",
             "DB_PASS": "{{ ti.xcom_pull(task_ids='runtime_config')['db_pass'] }}",
