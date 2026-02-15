@@ -3,6 +3,7 @@ from datetime import datetime
 
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.hooks.base import BaseHook
+from airflow.models.param import Param
 from airflow.sdk import Variable, dag, task
 
 
@@ -15,9 +16,27 @@ from airflow.sdk import Variable, dag, task
     tags=["mlops", "gnn", "dataset"],
     default_args={"retries": 1},
     params={
-        "dataset_version": "",
-        "start_date": "",
-        "end_date": "",
+        "dataset_version": Param(
+            default="",
+            type="string",
+            title="Dataset Version",
+            description="Patch/version label for dataset partitioning",
+            examples=["15.4"],
+        ),
+        "start_date": Param(
+            default="",
+            type="string",
+            title="Start Date",
+            description="Inclusive start datetime (UTC recommended), format: YYYY-MM-DD HH:MM:SS",
+            examples=["2026-01-01 00:00:00"],
+        ),
+        "end_date": Param(
+            default="",
+            type="string",
+            title="End Date",
+            description="Inclusive end datetime (UTC recommended), format: YYYY-MM-DD HH:MM:SS",
+            examples=["2026-01-14 23:59:59"],
+        ),
     },
 )
 def lol_gnn_build_trainset():

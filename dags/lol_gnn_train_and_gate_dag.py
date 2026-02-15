@@ -3,6 +3,7 @@ from datetime import datetime
 
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.hooks.base import BaseHook
+from airflow.models.param import Param
 from airflow.sdk import Variable, dag, task
 
 
@@ -15,7 +16,13 @@ from airflow.sdk import Variable, dag, task
     tags=["mlops", "gnn", "train"],
     default_args={"retries": 1},
     params={
-        "dataset_version": "",
+        "dataset_version": Param(
+            default="",
+            type="string",
+            title="Dataset Version",
+            description="Target dataset version to download/train/evaluate",
+            examples=["15.4"],
+        ),
     },
 )
 def lol_gnn_train_and_gate():
