@@ -11,8 +11,7 @@ sys.path.append("/opt/airflow/dags/git/repo")
 from src.tasks.match_tasks import (
     fetch_root_match,
     fetch_recent_matches,
-    save_all_to_postgres,
-    save_champion_mastery
+    save_all_to_postgres
 )
 
 
@@ -50,16 +49,10 @@ def riot_match_to_postgres():
         python_callable=save_all_to_postgres
     )
 
-    # Task 4: Save mastires into PostgreSQL
-    
-    save_mastery_task = PythonOperator(
-        task_id="save_champion_mastery",
-        python_callable=save_champion_mastery
-    )
     
 
     # Define task dependencies
-    fetch_root_task >> fetch_matches_task >> save_to_postgres_task >> save_mastery_task
+    fetch_root_task >> fetch_matches_task >> save_to_postgres_task
 
 
 dag = riot_match_to_postgres()
