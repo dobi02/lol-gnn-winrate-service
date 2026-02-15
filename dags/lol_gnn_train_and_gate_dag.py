@@ -69,7 +69,10 @@ def lol_gnn_train_and_gate():
         image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
         api_version="auto",
         docker_url="unix://var/run/docker.sock",
-        network_mode="{{ ti.xcom_pull(task_ids='runtime_config')['network_mode'] }}",
+        network_mode=Variable.get(
+            "lol_gnn_pipeline_network",
+            default="lol-gnn-winrate-service_lol-network",
+        ),
         auto_remove="success",
         mount_tmp_dir=False,
         mounts=[

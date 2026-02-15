@@ -59,7 +59,7 @@ def lol_gnn_build_trainset():
 
         return {
             "image": Variable.get("lol_gnn_pipeline_image", default="lol-gnn-pipeline:latest"),
-            "network_mode": Variable.get("lol_gnn_pipeline_network", default="bridge"),
+            "network_mode": Variable.get("lol_gnn_pipeline_network", default="lol-gnn-winrate-service_lol-network"),
             "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training"),
             "train_config": Variable.get("lol_gnn_pipeline_train_config", default="config.json"),
             "minio_bucket": Variable.get("lol_gnn_dataset_bucket", default="mlflow"),
@@ -81,7 +81,10 @@ def lol_gnn_build_trainset():
         image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
         api_version="auto",
         docker_url="unix://var/run/docker.sock",
-        network_mode="{{ ti.xcom_pull(task_ids='runtime_config')['network_mode'] }}",
+        network_mode=Variable.get(
+            "lol_gnn_pipeline_network",
+            default="lol-gnn-winrate-service_lol-network",
+        ),
         auto_remove="success",
         mount_tmp_dir=False,
         mounts=[
