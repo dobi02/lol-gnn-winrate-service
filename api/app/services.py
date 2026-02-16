@@ -40,7 +40,7 @@ async def fetch_spectator_and_enrichment_from_riot_id(
     riot_id: str,
     platform_id: str = "KR",
     use_history: bool = True,
-    history_count: int = 20,
+    history_count: int = 8,
 ) -> Tuple[dict, EnrichmentPayload, List[str]]:
     """
     Implements the procedure:
@@ -72,32 +72,61 @@ async def fetch_spectator_and_enrichment_from_riot_id(
             raise e  # caller will convert to 404 Not in game
         raise
 
-    enrichment = EnrichmentPayload(use_history=bool(use_history), history_matches_by_puuid={}, champ_mastery_by_puuid={})
+    enrichment = EnrichmentPayload(
+        use_history=bool(use_history),
+        history_matches_by_puuid={}
+    )
 
     if not use_history:
         return spectator_payload, enrichment, warnings
 
     # 3-4) per participant cache
     participants = spectator_payload.get("participants", []) or []
+
     for p in participants:
         p_puuid = p.get("puuid")
         if not p_puuid:
             warnings.append("participant missing puuid; skip enrichment fetch")
             continue
 
-        # History cache
-        hist = db.get_history(p_puuid)
-        if hist is None:
-            # 4) cache miss -> riot fetch (match ids only, light)
-            try:
-                match_ids = client.get_match_ids_by_puuid(platform_id=platform_id, puuid=p_puuid, count=history_count)
-                hist = {"match_ids": match_ids}
-                db.upsert_history(p_puuid, hist)
-            except Exception as e:
-                warnings.append(f"history fetch failed for puuid={p_puuid[:8]}...: {type(e).__name__}")
-                hist = {"match_ids": []}
+        try:
+            target_match_ids = client.get_match_ids_by_puuid(
+                platform_id=platform_id,
+                puuid=p_puuid,
+                count=history_count
+            )
 
-        enrichment.history_matches_by_puuid[p_puuid] = hist
+            existing_matches_map = db.get_matches_by_ids(target_match_ids)
+
+            final_match_list = []
+
+            for match_id in target_match_ids:
+                if match_id in existing_matches_map:
+                    # Case A: DB에 있음 -> DB 데이터 사용 (API 호출 X)
+                    final_match_list.append(existing_matches_map[match_id])
+                else:
+                    # Case B: DB에 없음 -> API 호출 (Heavy Fetch) & DB 저장
+                    try:
+                        match_detail = client.get_match_by_id(
+                            platform_id=platform_id,
+                            match_id=match_id
+                        )
+
+                        # 가져온 데이터 리스트에 추가
+                        final_match_list.append(match_detail)
+
+                        # 나중을 위해 DB에 저장 (비동기 처리하면 더 좋음)
+                        db.save_match(match_detail)
+
+                    except Exception as e:
+                        warnings.append(f"Failed to fetch missing match {match_id}: {e}")
+
+            enrichment.history_matches_by_puuid[p_puuid] = final_match_list
+        except Exception as e:
+            warnings.append(f"history fetch failed for puuid={p_puuid[:8]}...: {type(e).__name__}")
+
+
+
 
         # Mastery cache (optional; requires summonerId)
         # mastery = db.get_mastery(p_puuid)
