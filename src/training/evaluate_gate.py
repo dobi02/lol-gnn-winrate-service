@@ -12,6 +12,10 @@ def load_json(path: str) -> dict:
         return json.load(f)
 
 
+def str_to_bool(value: str) -> bool:
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def get_run_id(
     client: MlflowClient,
     experiment_name: str,
@@ -72,14 +76,28 @@ def main() -> None:
     parser.add_argument("--criteria", default="evaluation_criteria.json", help="Path to gate criteria JSON")
     parser.add_argument("--run-id-file", default="", help="File containing MLflow run_id")
     parser.add_argument("--pipeline-run-id", default="", help="Orchestration run id for exact run lookup")
-    parser.add_argument("--promote-on-pass", action="store_true", help="Set production tag on gate pass")
-    parser.add_argument("--promote-tag-key", default="status", help="Tag key for promotion")
-    parser.add_argument("--promote-tag-value", default="production", help="Tag value for promotion")
-    parser.add_argument("--demote-tag-value", default="regacy", help="Tag value for previous production runs")
+    parser.add_argument(
+        "--promote-on-pass",
+        nargs="?",
+        const="true",
+        default="",
+        help="Override promote_on_pass (true/false). If value is omitted, true is used.",
+    )
+    parser.add_argument("--promote-tag-key", default="", help="Override tag key for promotion")
+    parser.add_argument("--promote-tag-value", default="", help="Override tag value for promotion")
+    parser.add_argument("--demote-tag-value", default="", help="Override tag value for previous production runs")
     args = parser.parse_args()
 
     config = load_json(args.config)
     criteria = load_json(args.criteria)
+
+    if args.promote_on_pass != "":
+        promote_on_pass = str_to_bool(args.promote_on_pass)
+    else:
+        promote_on_pass = bool(criteria.get("promote_on_pass", False))
+    promote_tag_key = args.promote_tag_key or criteria.get("promote_tag_key", "status")
+    promote_tag_value = args.promote_tag_value or criteria.get("promote_tag_value", "production")
+    demote_tag_value = args.demote_tag_value or criteria.get("demote_tag_value", "legacy")
 
     tracking_uri = config["mlflow"]["uri"]
     experiment_name = config["mlflow"]["experiment_name"]
@@ -107,27 +125,27 @@ def main() -> None:
             print(f"- {msg}")
         sys.exit(1)
 
-    if args.promote_on_pass:
+    if promote_on_pass:
         exp = client.get_experiment_by_name(experiment_name)
         if exp is None:
             raise ValueError(f"Experiment not found: {experiment_name}")
 
         existing_prod_runs = client.search_runs(
             experiment_ids=[exp.experiment_id],
-            filter_string=f"tags.{args.promote_tag_key} = '{args.promote_tag_value}'",
+            filter_string=f"tags.{promote_tag_key} = '{promote_tag_value}'",
             order_by=["attributes.start_time DESC"],
             max_results=5000,
         )
         for prod_run in existing_prod_runs:
             if prod_run.info.run_id == run_id:
                 continue
-            client.set_tag(prod_run.info.run_id, args.promote_tag_key, args.demote_tag_value)
+            client.set_tag(prod_run.info.run_id, promote_tag_key, demote_tag_value)
 
-        client.set_tag(run_id, args.promote_tag_key, args.promote_tag_value)
+        client.set_tag(run_id, promote_tag_key, promote_tag_value)
         print(
             f"\n[PASS] Model quality gate passed. "
-            f"Set tag {args.promote_tag_key}={args.promote_tag_value} on run {run_id} "
-            f"and demoted previous production runs to {args.demote_tag_value}"
+            f"Set tag {promote_tag_key}={promote_tag_value} on run {run_id} "
+            f"and demoted previous production runs to {demote_tag_value}"
         )
     else:
         print("\n[PASS] Model quality gate passed")

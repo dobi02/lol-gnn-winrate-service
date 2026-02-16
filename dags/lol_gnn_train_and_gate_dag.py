@@ -64,8 +64,8 @@ def lol_gnn_train_and_gate():
 
     cfg = runtime_config()
 
-    download_train_and_gate = DockerOperator(
-        task_id="download_train_and_gate",
+    download_and_train = DockerOperator(
+        task_id="download_and_train",
         image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
         api_version="auto",
         docker_url="unix://var/run/docker.sock",
@@ -108,18 +108,54 @@ def lol_gnn_train_and_gate():
             "python train.py "
             "--config {{ ti.xcom_pull(task_ids='runtime_config')['train_config'] }} "
             "--pipeline-run-id {{ run_id }} "
-            "--run-id-output .mlflow_run_id && "
-            "python evaluate_gate.py "
-            "--config {{ ti.xcom_pull(task_ids='runtime_config')['train_config'] }} "
-            "--criteria {{ ti.xcom_pull(task_ids='runtime_config')['criteria_file'] }} "
-            "--pipeline-run-id {{ run_id }} "
-            "--run-id-file .mlflow_run_id "
-            "--promote-on-pass --promote-tag-key status --promote-tag-value production"
+            "--run-id-output .mlflow_run_id"
             "'"
         ),
     )
 
-    cfg >> download_train_and_gate
+    evaluate_gate = DockerOperator(
+        task_id="evaluate_gate",
+        image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
+        api_version="auto",
+        docker_url="unix://var/run/docker.sock",
+        network_mode=Variable.get(
+            "lol_gnn_pipeline_network",
+            default="lol-gnn-winrate-service_lol-network",
+        ),
+        auto_remove="success",
+        mount_tmp_dir=False,
+        mounts=[
+            Mount(
+                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                target="/workspace/src/training",
+                type="bind",
+            ),
+        ],
+        environment={
+            "DB_USER": "{{ ti.xcom_pull(task_ids='runtime_config')['db_user'] }}",
+            "DB_PASS": "{{ ti.xcom_pull(task_ids='runtime_config')['db_pass'] }}",
+            "DB_HOST": "{{ ti.xcom_pull(task_ids='runtime_config')['db_host'] }}",
+            "DB_PORT": "{{ ti.xcom_pull(task_ids='runtime_config')['db_port'] }}",
+            "DB_NAME": "{{ ti.xcom_pull(task_ids='runtime_config')['db_name'] }}",
+            "MINIO_ENDPOINT_URL": "{{ ti.xcom_pull(task_ids='runtime_config')['minio_endpoint'] }}",
+            "MLFLOW_S3_ENDPOINT_URL": "{{ ti.xcom_pull(task_ids='runtime_config')['minio_endpoint'] }}",
+            "AWS_ACCESS_KEY_ID": "{{ ti.xcom_pull(task_ids='runtime_config')['minio_access_key'] }}",
+            "AWS_SECRET_ACCESS_KEY": "{{ ti.xcom_pull(task_ids='runtime_config')['minio_secret_key'] }}",
+        },
+        command=(
+            "bash -lc '"
+            "set -euo pipefail && "
+            "cd {{ ti.xcom_pull(task_ids='runtime_config')['project_dir'] }} && "
+            "python evaluate_gate.py "
+            "--config {{ ti.xcom_pull(task_ids='runtime_config')['train_config'] }} "
+            "--criteria {{ ti.xcom_pull(task_ids='runtime_config')['criteria_file'] }} "
+            "--pipeline-run-id {{ run_id }} "
+            "--run-id-file .mlflow_run_id"
+            "'"
+        ),
+    )
+
+    cfg >> download_and_train >> evaluate_gate
 
 
 dag = lol_gnn_train_and_gate()
