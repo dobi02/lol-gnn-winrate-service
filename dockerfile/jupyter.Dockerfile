@@ -14,6 +14,12 @@ RUN add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update && \
     apt-get install -y python3.13 python3.13-venv python3.13-dev
 
+# Codex CLI 설치 (Jupyter 웹 터미널에서 사용)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends nodejs npm && \
+    npm install -g @openai/codex && \
+    rm -rf /var/lib/apt/lists/*
+
 # python3.13을 기본 python 명령어로 설정
 RUN ln -sf /usr/bin/python3.13 /usr/bin/python3 && \
     ln -sf /usr/bin/python3.13 /usr/bin/python

@@ -23,7 +23,10 @@ x-airflow-common:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
     - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
   user: "${AIRFLOW_UID:-50000}:0"
+  group_add:
+    - "${DOCKER_GID}"
   depends_on:
     &airflow-common-depends-on
     postgres:
@@ -461,6 +464,7 @@ services:
       - RESTARTABLE=yes
     volumes:
       - ./notebooks:/home/jovyan/work
+      - ./jupyter_codex:/home/jovyan/.codex
     depends_on:
       - data-postgres
       - lol-minio
