@@ -5,3 +5,4 @@ python-dotenv
 requests
 mlflow
 boto3
+psycopg2-binary

@@ -1,0 +1,9 @@
+mlflow
+boto3
+numpy
+pandas
+scikit-learn
+tqdm
+sqlalchemy
+psycopg2-binary
+pyyaml
