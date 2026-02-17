@@ -10,13 +10,13 @@ from docker.types import Mount
 
 
 @dag(
-    dag_id="lol_gnn_train_and_gate",
+    dag_id="test_lol_gnn_train_and_gate",
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
     max_active_runs=1,
     tags=["mlops", "gnn", "train"],
-    default_args={"retries": 1},
+    default_args={"retries": 0},
     params={
         "dataset_version": Param(
             default="",
