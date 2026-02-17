@@ -1,0 +1,10 @@
+{
+  "lol_gnn_build_trainset": {
+    "dataset_version": "15.4",
+    "start_date": "2026-01-01 00:00:00",
+    "end_date": "2026-01-14 23:59:59"
+  },
+  "lol_gnn_train_and_gate": {
+    "dataset_version": "15.4"
+  }
+}

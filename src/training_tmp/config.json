@@ -1,0 +1,66 @@
+{
+    "project_name": "LoL_Win_Prediction",
+    "version": "1.0.0",
+    "data_mode": "local",
+    "use_streamer_mode": true,
+    "streamer_deterministic": false,
+    "streamer_seed": 42,
+    "train_only_streamer_mode": true,
+    "history_limit": 8,
+    "paths": {
+        "root_dir": "./processed_data_chunks",
+        "model_save_path": "model.pth"
+    },
+    "mlflow": {
+        "uri": "http://lol-mlflow:5000",
+        "experiment_name": "LoL_Win_Prediction_v1",
+        "run_name_prefix": "GNN_SAGE",
+        "dataset_name": "matchgraph_25.24_20251204-20260107",
+        "tags": {
+            "developer": "dongbin",
+            "status": "development",
+            "description": "airflow"
+        }
+    },
+    "train": {
+        "batch_size": 32,
+        "learning_rate": 0.001,
+        "epochs": 10,
+        "hidden_channels": 64,
+        "dropout_rate": 0.5,
+        "weight_decay": 0.0001,
+        "grad_clip_norm": 1.0,
+        "early_stop_patience": 4,
+        "scheduler_patience": 2,
+        "scheduler_factor": 0.5
+    },
+    "data_dims": {
+        "num_champions": 2000,
+        "embedding_dim": 16,
+        "player_dim": 6,
+        "history_dim": 15,
+        "history_limit": 8
+    },
+    "emb_configs": {
+        "1": [
+            2000,
+            16
+        ],
+        "2": [
+            100,
+            4
+        ],
+        "3": [
+            100,
+            4
+        ],
+        "4": [
+            10000,
+            4
+        ],
+        "5": [
+            10000,
+            4
+        ]
+    }
+}
