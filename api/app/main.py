@@ -54,8 +54,8 @@ async def lifespan(app: FastAPI):
     device = os.getenv("DEVICE", "cpu")
     experiment_name = os.getenv("MLFLOW_EXPERIMENT_NAME", "LoL_Win_Prediction_v1")
 
-    # (선택) DB 초기화
-    # db.init_db(os.getenv('POSTGRES_DSN'))
+    # DB 초기화 (docker-compose의 DATABASE_URL 우선 사용)
+    db.init_db(os.getenv("DATABASE_URL") or os.getenv("POSTGRES_DSN"))
 
     try:
         # ★ MLflow 검색을 통해 Production 모델의 run_id 획득 ★
@@ -82,7 +82,7 @@ async def lifespan(app: FastAPI):
         pass
 
     yield
-    # db.close_db()
+    db.close_db()
     ml_models.clear()
 
 
@@ -282,22 +282,17 @@ async def predict_from_discord(request: DiscordPredictRequest):
         )
         print("✅ [DEBUG] 3. Riot API 데이터 조회 성공!", flush=True)
 
-        # Spectator 확인
-        print(f"   -> Spectator Keys: {list(spectator_payload.keys())}", flush=True)
-
-        # ★★★ 여기가 의심 지점입니다 ★★★
-        # enrichment가 None인지, dict인지 타입부터 확인합니다.
-        print(f"🔍 [DEBUG] Enrichment 타입 확인: {type(enrichment)}", flush=True)
-        print(f"🔍 [DEBUG] Enrichment 값 확인: {enrichment}", flush=True)
-
-        # Pydantic 모델인지 확인 후 dict로 변환하여 로깅
+        # 요청 JSON 본문 전체는 로그에 남기지 않고, 구조 요약 정보만 출력
+        participants = spectator_payload.get("participants")
+        participant_count = len(participants) if isinstance(participants, list) else 0
+        print(f"   -> Spectator participant_count: {participant_count}", flush=True)
         if hasattr(enrichment, "model_dump"):
             enrichment_dict = enrichment.model_dump()
-            print(f"   -> Enrichment Keys: {list(enrichment_dict.keys())}", flush=True)
+            print(f"   -> Enrichment key_count: {len(enrichment_dict.keys())}", flush=True)
         elif isinstance(enrichment, dict):
-            print(f"   -> Enrichment Keys: {list(enrichment.keys())}", flush=True)
+            print(f"   -> Enrichment key_count: {len(enrichment.keys())}", flush=True)
         else:
-            print(f"⚠️ [WARN] Enrichment가 알 수 없는 타입입니다: {type(enrichment)}", flush=True)
+            print(f"⚠️ [WARN] Enrichment 타입: {type(enrichment)}", flush=True)
 
         # (5~6) 모델 입력 변환 및 추론 단계
         print("🚀 [DEBUG] 4. 모델 입력 데이터 변환 및 추론 시작...", flush=True)

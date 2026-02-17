@@ -261,6 +261,38 @@ services:
     - lol-network
 
   # ----------------------------------------------------
+  # Airflow Log Cleaner (특정 DAG 로그만 주기 정리)
+  # ----------------------------------------------------
+  airflow-log-cleaner:
+    image: alpine:3.21
+    user: "0:0"
+    volumes:
+      - ./airflow/logs:/opt/airflow/logs
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "Starting Airflow log cleaner (target DAGs only, retention=3d, interval=86400s)"
+        while true; do
+          for dag_dir in \
+            "/opt/airflow/logs/dag_id=riot_match_collector" \
+            "/opt/airflow/logs/dag_id=riot_match_ro_postgres_once" \
+            "/opt/airflow/logs/dag_id=riot_match_to_postgres_once"; do
+            if [ -d "$${dag_dir}" ]; then
+              find "$${dag_dir}" -mindepth 1 -type f -mtime +3 -delete
+              find "$${dag_dir}" -mindepth 1 -type d -empty -delete
+            fi
+          done
+          sleep 86400
+        done
+    restart: always
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    networks:
+      - lol-network
+
+  # ----------------------------------------------------
   # MinIO (데이터 레이크)
   # ----------------------------------------------------
   lol-minio:
@@ -526,8 +558,10 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - RIOT_API_KEY=${RIOT_API_KEY}
       - MLFLOW_EXPERIMENT_NAME=${MLFLOW_EXPERIMENT_NAME}
+      - MLFLOW_ARTIFACT_CACHE_DIR=/app/.mlflow-cache
     volumes:
       - ./api/app:/app/app   # 코드 수정 시 Hot Reload 지원
+      - prediction_api_mlflow_cache:/app/.mlflow-cache
     depends_on:
       data-postgres:
         condition: service_healthy
@@ -553,6 +587,7 @@ volumes:
   postgres-db-volume:
   data-postgres-volume:
   redis_data:
+  prediction_api_mlflow_cache:
 
 networks:
   lol-network:

@@ -1,9 +1,9 @@
 import os
 import sys
 import json
+import shutil
 import torch
 import mlflow.tracking
-import tempfile
 from torch_geometric.data import Batch, HeteroData
 
 
@@ -13,11 +13,63 @@ class LoLPredictor:
         client = mlflow.tracking.MlflowClient()
 
         # ---------------------------------------------------------
-        # 1. Artifact 다운로드
+        # 1. Artifact 캐시 확인 -> 없으면 다운로드
         # ---------------------------------------------------------
-        temp_dir = tempfile.mkdtemp()
-        # 전체 아티팩트를 다운로드 (model.py, model_utils.py, config 등 포함)
-        local_path = client.download_artifacts(run_id, path="", dst_path=temp_dir)
+        cache_root = os.getenv("MLFLOW_ARTIFACT_CACHE_DIR", "/tmp/mlflow-artifacts")
+        run_cache_root = os.path.join(cache_root, run_id)
+        os.makedirs(run_cache_root, exist_ok=True)
+
+        manifest_path = os.path.join(run_cache_root, "manifest.json")
+        cached_local_path = ""
+        if os.path.exists(manifest_path):
+            try:
+                with open(manifest_path, "r", encoding="utf-8") as f:
+                    manifest = json.load(f)
+                    cached_local_path = manifest.get("local_path", "")
+            except Exception:
+                cached_local_path = ""
+
+        def _is_valid_artifact_dir(path: str) -> bool:
+            if not path:
+                return False
+            config_ok = (
+                os.path.exists(os.path.join(path, "config", "config.json"))
+                or os.path.exists(os.path.join(path, "config.json"))
+            )
+            weight_ok = os.path.exists(os.path.join(path, "model", "data", "model.pth"))
+            code_ok = os.path.isdir(os.path.join(path, "code"))
+            return config_ok and weight_ok and code_ok
+
+        local_path = ""
+        candidate_paths = [
+            cached_local_path,
+            run_cache_root,
+            os.path.join(run_cache_root, "artifacts"),
+        ]
+        for candidate in candidate_paths:
+            if _is_valid_artifact_dir(candidate):
+                local_path = candidate
+                print(f"♻️ MLflow artifact cache hit: {local_path}")
+                break
+
+        if not local_path:
+            local_path = client.download_artifacts(run_id, path="", dst_path=run_cache_root)
+            with open(manifest_path, "w", encoding="utf-8") as f:
+                json.dump({"run_id": run_id, "local_path": local_path}, f)
+            print(f"⬇️ MLflow artifact downloaded: {local_path}")
+
+        # 최근 1개(run_id)만 유지: 현재 run_id를 제외한 캐시 디렉터리 정리
+        for entry in os.listdir(cache_root):
+            entry_path = os.path.join(cache_root, entry)
+            if entry == run_id:
+                continue
+            if os.path.isdir(entry_path):
+                try:
+                    shutil.rmtree(entry_path)
+                    print(f"🧹 Removed old MLflow cache run: {entry}")
+                except Exception as e:
+                    print(f"⚠️ Failed to remove old cache run {entry}: {e}")
+
         code_path = os.path.join(local_path, "code")
 
         # ---------------------------------------------------------

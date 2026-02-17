@@ -14,7 +14,7 @@ _CONN = None
 
 def init_db(dsn: Optional[str] = None) -> None:
     global _CONN
-    dsn = dsn or os.getenv("POSTGRES_DSN", "")
+    dsn = dsn or os.getenv("DATABASE_URL", "") or os.getenv("POSTGRES_DSN", "")
     if not dsn:
         _CONN = None
         return
