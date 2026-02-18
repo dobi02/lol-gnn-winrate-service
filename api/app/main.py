@@ -58,7 +58,7 @@ async def lifespan(app: FastAPI):
 
     # DB 초기화 (docker-compose의 DATABASE_URL 우선 사용)
     db.init_db(os.getenv("DATABASE_URL") or os.getenv("POSTGRES_DSN"))
-    db.create_log_tables()
+#    db.create_log_tables()
     
     try:
         # ★ MLflow 검색을 통해 Production 모델의 run_id 획득 ★
