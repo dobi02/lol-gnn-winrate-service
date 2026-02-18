@@ -19,6 +19,14 @@ x-airflow-common:
     AIRFLOW_CONN_MINIO_DEFAULT: '{"conn_type": "aws", "login": "${MINIO_ROOT_USER}", "password": "${MINIO_ROOT_PASSWORD}", "extra": {"endpoint_url": "http://lol-minio:9000"}}'
     AIRFLOW_CONN_DATA_POSTGRES_CONNECTION: '{"conn_type": "postgres", "host": "data-postgres", "login": "${DATA_POSTGRES_USER}", "password": "${DATA_POSTGRES_PASSWORD}", "schema": "data_db", "port": 5432}'
     AIRFLOW__DAG_PROCESSOR__MIN_FILE_PROCESS_INTERVAL: '30'
+    AIRFLOW__EMAIL__EMAIL_BACKEND: airflow.utils.email.send_email_smtp
+    AIRFLOW__SMTP__SMTP_HOST: smtp.resend.com
+    AIRFLOW__SMTP__SMTP_PORT: '465'
+    AIRFLOW__SMTP__SMTP_SSL: 'True'
+    AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
+    AIRFLOW__SMTP__SMTP_USER: resend
+    AIRFLOW__SMTP__SMTP_PASSWORD: '${RESEND_API_KEY}'
+    AIRFLOW__SMTP__SMTP_MAIL_FROM: '${AIRFLOW_SMTP_MAIL_FROM}'
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
