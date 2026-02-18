@@ -43,6 +43,17 @@ def main(config_path: str = "config.json", pipeline_run_id: str = "", run_id_out
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
+    train_cfg = config.get("train", {})
+    batch_size = int(train_cfg.get("batch_size", 32))
+    epochs = int(train_cfg.get("epochs", 10))
+    lr = float(train_cfg.get("learning_rate", 1e-3))
+    weight_decay = float(train_cfg.get("weight_decay", 0.0))
+    grad_clip_norm = float(train_cfg.get("grad_clip_norm", 0.0))
+    early_stop_patience = int(train_cfg.get("early_stop_patience", 0))
+    scheduler_patience = int(train_cfg.get("scheduler_patience", 0))
+    scheduler_factor = float(train_cfg.get("scheduler_factor", 0.5))
+    num_workers = int(train_cfg.get("num_workers", 0))
+
     with mlflow.start_run(run_name=f"{config['mlflow']['run_name_prefix']}_train") as run:
         if "tags" in config["mlflow"]:
             mlflow.set_tags(config["mlflow"]["tags"])
@@ -56,28 +67,38 @@ def main(config_path: str = "config.json", pipeline_run_id: str = "", run_id_out
             value = config["mlflow"].get(key)
             if value is not None and str(value) != "":
                 mlflow.log_param(key, str(value))
-        mlflow.log_params(config["train"])
-        mlflow.log_params(config["data_dims"])
+
+        mlflow.log_params(train_cfg)
+        mlflow.log_params(config.get("data_dims", {}))
 
         train_ds = LoLChunkDataset(config=config, split="train")
         val_ds = LoLChunkDataset(config=config, split="val", shuffle=False)
         test_ds = LoLChunkDataset(config=config, split="test", shuffle=False)
 
-        train_loader = DataLoader(train_ds, batch_size=config["train"]["batch_size"], num_workers=2)
-        val_loader = DataLoader(val_ds, batch_size=config["train"]["batch_size"], num_workers=2)
-        test_loader = DataLoader(test_ds, batch_size=config["train"]["batch_size"], num_workers=2)
+        train_loader = DataLoader(train_ds, batch_size=batch_size, num_workers=num_workers)
+        val_loader = DataLoader(val_ds, batch_size=batch_size, num_workers=num_workers)
+        test_loader = DataLoader(test_ds, batch_size=batch_size, num_workers=num_workers)
 
         model = LoLGNN(config=config).to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=config["train"]["learning_rate"])
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+        scheduler = None
+        if scheduler_patience > 0:
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                optimizer,
+                mode="min",
+                factor=scheduler_factor,
+                patience=scheduler_patience,
+            )
         criterion = torch.nn.BCEWithLogitsLoss()
 
         print(f"Run ID: {run.info.run_id} - Start Training...")
 
         best_val_loss = float("inf")
+        no_improve_count = 0
 
-        for epoch in range(1, config["train"]["epochs"] + 1):
+        for epoch in range(1, epochs + 1):
             model.train()
-            total_loss = 0
+            total_loss = 0.0
             steps = 0
 
             for batch in train_loader:
@@ -88,13 +109,19 @@ def main(config_path: str = "config.json", pipeline_run_id: str = "", run_id_out
                 loss = criterion(out, batch.y.view(-1, 1))
 
                 loss.backward()
+                if grad_clip_norm > 0:
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=grad_clip_norm)
                 optimizer.step()
 
-                total_loss += loss.item()
+                total_loss += float(loss.item())
                 steps += 1
 
-            avg_train_loss = total_loss / steps if steps > 0 else 0
+            avg_train_loss = total_loss / steps if steps > 0 else 0.0
             val_metrics = evaluate(model, val_loader, device)
+            val_log_loss = float(val_metrics.get("val_log_loss", np.inf))
+
+            if scheduler is not None:
+                scheduler.step(val_log_loss)
 
             print(f"Epoch {epoch} | Train Loss: {avg_train_loss:.4f}")
             print(f"Val Metrics: {val_metrics}")
@@ -103,15 +130,22 @@ def main(config_path: str = "config.json", pipeline_run_id: str = "", run_id_out
             for k, v in val_metrics.items():
                 mlflow.log_metric(k, v, step=epoch)
 
-            if val_metrics["val_log_loss"] < best_val_loss:
-                best_val_loss = val_metrics["val_log_loss"]
+            if val_log_loss < best_val_loss:
+                best_val_loss = val_log_loss
+                no_improve_count = 0
                 torch.save(model.state_dict(), config["paths"]["model_save_path"])
                 print(f"--> Model Saved (Val Log Loss: {best_val_loss:.4f})")
+            else:
+                no_improve_count += 1
+
+            if early_stop_patience > 0 and no_improve_count >= early_stop_patience:
+                print(f"Early stopping at epoch {epoch} (no improvement for {no_improve_count} epochs)")
+                break
 
         print("\nTraining Complete. Starting Final Test Evaluation...")
 
         if os.path.exists(config["paths"]["model_save_path"]):
-            checkpoint = torch.load(config["paths"]["model_save_path"])
+            checkpoint = torch.load(config["paths"]["model_save_path"], map_location=device)
             model.load_state_dict(checkpoint)
             print("Loaded Best Model for Testing.")
         else:

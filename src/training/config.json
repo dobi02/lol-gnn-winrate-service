@@ -3,6 +3,10 @@
     "version": "1.0.0",
     "data_mode": "local",
     "use_streamer_mode": true,
+    "streamer_deterministic": false,
+    "streamer_seed": 42,
+    "train_only_streamer_mode": true,
+    "history_limit": 8,
     "paths": {
         "root_dir": "./processed_data_chunks",
         "model_save_path": "model.pth"
@@ -23,7 +27,12 @@
         "learning_rate": 0.001,
         "epochs": 10,
         "hidden_channels": 64,
-        "dropout_rate": 0.5
+        "dropout_rate": 0.5,
+        "weight_decay": 0.0001,
+        "grad_clip_norm": 1.0,
+        "early_stop_patience": 4,
+        "scheduler_patience": 2,
+        "scheduler_factor": 0.5
     },
     "data_dims": {
         "num_champions": 2000,
