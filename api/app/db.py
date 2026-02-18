@@ -117,3 +117,121 @@ def save_match(match_detail: Dict[str, Any]) -> None:
 
         except Exception as e:
             print(f"❌ DB Save Error ({match_id}): {e}")
+
+def create_log_tables() -> None:
+    """
+    로그 테이블 생성은 init_db와 분리.
+    서버 startup(lifespan)에서 init_db() 다음에 한 번 호출하는 것을 권장.
+    """
+    if _CONN is None:
+        return
+
+    with _CONN.cursor() as cur:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS prediction_request_log (
+              id                   BIGSERIAL PRIMARY KEY,
+              created_at           TIMESTAMPTZ NOT NULL DEFAULT now(),   -- 요청 시간
+
+              trace_id             TEXT NOT NULL,                        -- 요청 추적(없으면 UUID 추천)
+              endpoint             TEXT NOT NULL,
+              platform_id          TEXT NOT NULL,
+              game_id              BIGINT,
+
+              success              BOOLEAN NOT NULL,                     -- 성공 여부
+              status_code          INT NOT NULL,
+              error_message        TEXT,
+
+              latency_ms           INT NOT NULL,                         -- 처리 시간(ms)
+              pred_blue_win_prob   DOUBLE PRECISION,                     -- 반환 결과(블루 승률)
+
+              actual_blue_win      BOOLEAN,                              -- 실제 결과(나중에 batch update)
+              actual_fetched_at    TIMESTAMPTZ                           -- 실제 결과 반영 시간
+            );
+            """
+        )
+        cur.execute(
+            "CREATE INDEX IF NOT EXISTS idx_prl_created_at ON prediction_request_log (created_at DESC);"
+        )
+        cur.execute(
+            "CREATE INDEX IF NOT EXISTS idx_prl_game_platform ON prediction_request_log (platform_id, game_id);"
+        )
+        cur.execute(
+            "CREATE INDEX IF NOT EXISTS idx_prl_trace_id ON prediction_request_log (trace_id);"
+        )
+
+
+def insert_prediction_log(
+    *,
+    trace_id: str,
+    endpoint: str,
+    platform_id: str,
+    game_id: Optional[int],
+    success: bool,
+    status_code: int,
+    latency_ms: int,
+    pred_blue_win_prob: Optional[float],
+    error_message: Optional[str] = None,
+) -> None:
+    """
+    요청 1건당 1 row INSERT.
+    - 성공/실패 모두 기록 가능
+    - actual_blue_win은 나중 batch가 업데이트
+    """
+    if _CONN is None:
+        return
+
+    # 너무 긴 에러메시지는 컷(선택)
+    if error_message and len(error_message) > 2000:
+        error_message = error_message[:2000]
+
+    with _CONN.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO prediction_request_log (
+              trace_id, endpoint, platform_id, game_id,
+              success, status_code, error_message,
+              latency_ms, pred_blue_win_prob
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """,
+            (
+                trace_id,
+                endpoint,
+                platform_id,
+                game_id,
+                success,
+                status_code,
+                error_message,
+                latency_ms,
+                pred_blue_win_prob,
+            ),
+        )
+
+
+def update_actual_result(
+    *,
+    platform_id: str,
+    game_id: int,
+    actual_blue_win: bool,
+) -> int:
+    """
+    나중에 batch 작업에서 실제 승패를 채우는 용도.
+    해당 (platform_id, game_id)에 대해 업데이트된 row 수를 반환.
+    """
+    if _CONN is None:
+        return 0
+
+    with _CONN.cursor() as cur:
+        cur.execute(
+            """
+            UPDATE prediction_request_log
+            SET actual_blue_win = %s,
+                actual_fetched_at = now()
+            WHERE platform_id = %s
+              AND game_id = %s
+              AND actual_blue_win IS NULL;
+            """,
+            (actual_blue_win, platform_id, game_id),
+        )
+        return cur.rowcount

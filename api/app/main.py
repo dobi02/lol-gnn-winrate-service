@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import uuid
+import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from typing import Any, Dict, List, Tuple, Optional
@@ -56,7 +58,8 @@ async def lifespan(app: FastAPI):
 
     # DB 초기화 (docker-compose의 DATABASE_URL 우선 사용)
     db.init_db(os.getenv("DATABASE_URL") or os.getenv("POSTGRES_DSN"))
-
+    db.create_log_tables()
+    
     try:
         # ★ MLflow 검색을 통해 Production 모델의 run_id 획득 ★
         print(f"🔍 MLflow에서 '{experiment_name}'의 Production 모델을 검색 중...")
@@ -265,11 +268,30 @@ async def predict_and_format_response_or_raise(
 #디버깅용 코드
 @app.post("/predict/from-discord", response_model=DiscordPredictResponse)
 async def predict_from_discord(request: DiscordPredictRequest):
+    # (추가) 로깅용 trace_id + latency 측정 시작
+    trace_id = str(uuid.uuid4())
+    t0 = time.perf_counter()
+    endpoint = "/predict/from-discord"
     print(f"🚀 [DEBUG] 1. 요청 시작: {request.riot_id}", flush=True)
 
     predictor: LoLPredictor = ml_models.get("predictor")
     if predictor is None:
+        # (추가) 실패 로그
+        latency_ms = int((time.perf_counter() - t0) * 1000)
+        db.insert_prediction_log(
+            trace_id=trace_id,
+            endpoint=endpoint,
+            platform_id=request.platform_id,
+            game_id=None,
+            success=False,
+            status_code=503,
+            latency_ms=latency_ms,
+            pred_blue_win_prob=None,
+            error_message="Model is not ready",
+        )
         raise HTTPException(status_code=503, detail="Model is not ready")
+
+    spectator_payload = None  # (추가) 실패 로그에 game_id/platform_id를 넣기 위함
 
     try:
         # (1~4) Riot API 호출 단계
@@ -315,6 +337,23 @@ async def predict_from_discord(request: DiscordPredictRequest):
 
         meta = ml_models.get("meta")
 
+        # (추가) 성공 로그 기록
+        latency_ms = int((time.perf_counter() - t0) * 1000)
+        game_id = int(spectator_payload.get("gameId")) if spectator_payload.get("gameId") is not None else None
+        platform_id = str(spectator_payload.get("platformId")) if spectator_payload.get("platformId") is not None else request.platform_id
+
+        db.insert_prediction_log(
+            trace_id=trace_id,
+            endpoint=endpoint,
+            platform_id=platform_id,
+            game_id=game_id,
+            success=True,
+            status_code=200,
+            latency_ms=latency_ms,
+            pred_blue_win_prob=win100,  # 블루팀(team 100) 승률
+            error_message=None,
+        )
+
         print("✅ [DEBUG] 5. 모든 과정 성공! 응답 반환", flush=True)
         return DiscordPredictResponse(
             win_rate_team_100=win100,
@@ -327,9 +366,59 @@ async def predict_from_discord(request: DiscordPredictRequest):
         )
 
     except HTTPException as http_exc:
+        # (추가) HTTP 예외도 실패 로그 남김
+        latency_ms = int((time.perf_counter() - t0) * 1000)
+
+        # spectator_payload를 받았으면 game_id/platform_id를 로그에 최대한 채움
+        game_id = None
+        platform_id = request.platform_id
+        if isinstance(spectator_payload, dict):
+            if spectator_payload.get("gameId") is not None:
+                try:
+                    game_id = int(spectator_payload.get("gameId"))
+                except Exception:
+                    pass
+            if spectator_payload.get("platformId") is not None:
+                platform_id = str(spectator_payload.get("platformId"))
+
+        db.insert_prediction_log(
+            trace_id=trace_id,
+            endpoint=endpoint,
+            platform_id=platform_id,
+            game_id=game_id,
+            success=False,
+            status_code=http_exc.status_code,
+            latency_ms=latency_ms,
+            pred_blue_win_prob=None,
+            error_message=str(http_exc.detail),
+        )
         print(f"⚠️ [DEBUG] HTTP 예외 발생: {http_exc.detail}", flush=True)
         raise http_exc
     except Exception as e:
+        # (추가) 알 수 없는 예외도 실패 로그 남김
+        latency_ms = int((time.perf_counter() - t0) * 1000)
+        game_id = None
+        platform_id = request.platform_id
+        if isinstance(spectator_payload, dict):
+            if spectator_payload.get("gameId") is not None:
+                try:
+                    game_id = int(spectator_payload.get("gameId"))
+                except Exception:
+                    pass
+            if spectator_payload.get("platformId") is not None:
+                platform_id = str(spectator_payload.get("platformId"))
+
+        db.insert_prediction_log(
+            trace_id=trace_id,
+            endpoint=endpoint,
+            platform_id=platform_id,
+            game_id=game_id,
+            success=False,
+            status_code=500,
+            latency_ms=latency_ms,
+            pred_blue_win_prob=None,
+            error_message=f"Internal Server Error: {str(e)}",
+        )
         # Traceback을 문자열로 받아서 강제로 찍어버립니다.
         error_msg = traceback.format_exc()
         print("\n🚨🚨🚨 [CRITICAL ERROR - FULL TRACEBACK] 🚨🚨🚨", flush=True)
