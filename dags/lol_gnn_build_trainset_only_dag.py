@@ -5,7 +5,6 @@ from zoneinfo import ZoneInfo
 
 import pendulum
 from airflow.operators.python import ShortCircuitOperator
-from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.hooks.base import BaseHook
 from airflow.models.param import Param
@@ -86,9 +85,9 @@ def _is_offset_run_day(calendar_obj: dict, now_kst: datetime) -> bool:
 
 
 @dag(
-    dag_id="lol_gnn_build_trainset",
+    dag_id="lol_gnn_build_trainset_only",
     start_date=pendulum.datetime(2025, 1, 1, tz="Asia/Seoul"),
-    schedule="0 5 * * *",  # daily 5:00 KST; gated to start_date+1/+3 only
+    schedule=None,
     catchup=False,
     max_active_runs=1,
     tags=["mlops", "gnn", "dataset"],
@@ -117,7 +116,7 @@ def _is_offset_run_day(calendar_obj: dict, now_kst: datetime) -> bool:
         ),
     },
 )
-def lol_gnn_build_trainset():
+def lol_gnn_build_trainset_only():
     @task(task_id="runtime_config")
     def runtime_config():
         minio_conn_id = Variable.get("lol_gnn_minio_conn_id", default="minio_default")
@@ -252,17 +251,8 @@ def lol_gnn_build_trainset():
         ),
     )
 
-    trigger_train = TriggerDagRunOperator(
-        task_id="trigger_train_and_gate",
-        trigger_dag_id=Variable.get("lol_gnn_build_trigger_target_dag_id", default="lol_gnn_train_and_gate"),
-        conf={
-            "dataset_version": "{{ dag_run.conf.get('dataset_version') or params.dataset_version or ti.xcom_pull(task_ids='resolve_dataset_window')['dataset_version'] }}"
-        },
-        wait_for_completion=False,
-        reset_dag_run=True,
-    )
-
-    cfg >> resolved >> schedule_gate >> build_and_upload_dataset >> trigger_train
+    cfg >> resolved >> schedule_gate >> build_and_upload_dataset
 
 
-dag = lol_gnn_build_trainset()
+dag = lol_gnn_build_trainset_only()
+
