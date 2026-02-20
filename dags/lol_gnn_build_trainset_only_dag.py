@@ -104,22 +104,22 @@ def _is_offset_run_day(calendar_obj: dict, now_kst: datetime) -> bool:
     default_args={"retries": 1},
     params={
         "dataset_version": Param(
-            default="",
-            type="string",
+            default=None,
+            type=["null", "string"],
             title="Dataset Version (Optional Override)",
             description="If provided, override calendar-selected version",
             examples=["26.08"],
         ),
         "start_date": Param(
-            default="",
-            type="string",
+            default=None,
+            type=["null", "string"],
             title="Start Date (Optional Override)",
             description="If provided, override calendar-selected start datetime (KST), format: YYYY-MM-DD HH:MM:SS",
             examples=["2026-04-16 10:00:00"],
         ),
         "end_date": Param(
-            default="",
-            type="string",
+            default=None,
+            type=["null", "string"],
             title="End Date (Optional Override)",
             description="If provided, override computed end datetime (KST), format: YYYY-MM-DD HH:MM:SS",
             examples=["2026-04-30 05:59:59"],
