@@ -47,7 +47,7 @@ def lol_gnn_train_and_gate():
         return {
             "image": Variable.get("lol_gnn_pipeline_image", default="lol-gnn-pipeline:latest"),
             "network_mode": Variable.get("lol_gnn_pipeline_network", default="bridge"),
-            "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training"),
+            "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training_tmp"),
             "train_config": Variable.get("lol_gnn_pipeline_train_config", default="config.json"),
             "criteria_file": Variable.get("lol_gnn_pipeline_criteria_file", default="evaluation_criteria.json"),
             "minio_bucket": Variable.get("lol_gnn_dataset_bucket", default="mlflow"),
@@ -77,8 +77,8 @@ def lol_gnn_train_and_gate():
         mount_tmp_dir=False,
         mounts=[
             Mount(
-                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
-                target="/workspace/src/training",
+                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training_tmp",
+                target="/workspace/src/training_tmp",
                 type="bind",
             ),
         ],
@@ -128,8 +128,8 @@ def lol_gnn_train_and_gate():
         mount_tmp_dir=False,
         mounts=[
             Mount(
-                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
-                target="/workspace/src/training",
+                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training_tmp",
+                target="/workspace/src/training_tmp",
                 type="bind",
             ),
         ],
