@@ -77,7 +77,10 @@ def lol_gnn_train_and_gate():
         mount_tmp_dir=False,
         mounts=[
             Mount(
-                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                source=Variable.get(
+                    "lol_gnn_pipeline_training_host_dir",
+                    default="/opt/airflow/dags/git/repo/src/training",
+                ),
                 target="/workspace/src/training",
                 type="bind",
             ),
@@ -129,7 +132,10 @@ def lol_gnn_train_and_gate():
         mount_tmp_dir=False,
         mounts=[
             Mount(
-                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                source=Variable.get(
+                    "lol_gnn_pipeline_training_host_dir",
+                    default="/opt/airflow/dags/git/repo/src/training",
+                ),
                 target="/workspace/src/training",
                 type="bind",
             ),

@@ -38,6 +38,16 @@ from airflow.sdk import Variable, dag, task
 DEFAULT_PG_CONN_ID = "DATA_POSTGRES_CONNECTION"
 
 
+def _resolve_calendar_path(host_training_dir: str, calendar_file: str) -> Path:
+    primary = Path(host_training_dir) / calendar_file
+    if primary.exists():
+        return primary
+    fallback = Path(__file__).resolve().parents[1] / "src" / "training" / calendar_file
+    if fallback.exists():
+        return fallback
+    raise FileNotFoundError(f"Calendar file not found: {primary} (fallback: {fallback})")
+
+
 def _get_pg_conn_id() -> str:
     return Variable.get("lol_gnn_data_postgres_conn_id", default=DEFAULT_PG_CONN_ID)
 
@@ -318,10 +328,10 @@ def evaluate_and_trigger_retrain_dag():
         rolling_start = now_kst - timedelta(days=window_days)
         cal_host_dir = Variable.get(
             "lol_gnn_pipeline_training_host_dir",
-            default="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+            default="/opt/airflow/dags/git/repo/src/training",
         )
         cal_file = Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json")
-        cal_path = Path(cal_host_dir) / cal_file
+        cal_path = _resolve_calendar_path(cal_host_dir, cal_file)
         with cal_path.open("r", encoding="utf-8") as fp:
             calendar_obj = json.load(fp)
         cal_start = _resolve_current_calendar_start(calendar_obj, now_kst)
@@ -427,10 +437,10 @@ def evaluate_and_trigger_retrain_dag():
         now_kst = datetime.now(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
         cal_host_dir = Variable.get(
             "lol_gnn_pipeline_training_host_dir",
-            default="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+            default="/opt/airflow/dags/git/repo/src/training",
         )
         cal_file = Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json")
-        cal_path = Path(cal_host_dir) / cal_file
+        cal_path = _resolve_calendar_path(cal_host_dir, cal_file)
         try:
             with cal_path.open("r", encoding="utf-8") as fp:
                 calendar_obj = json.load(fp)

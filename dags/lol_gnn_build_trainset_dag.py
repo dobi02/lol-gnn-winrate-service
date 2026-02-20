@@ -14,6 +14,16 @@ from airflow.sdk import Variable, dag, task
 from docker.types import Mount
 
 
+def _resolve_calendar_path(host_training_dir: str, calendar_file: str) -> Path:
+    primary = Path(host_training_dir) / calendar_file
+    if primary.exists():
+        return primary
+    fallback = Path(__file__).resolve().parents[1] / "src" / "training" / calendar_file
+    if fallback.exists():
+        return fallback
+    raise FileNotFoundError(f"Calendar file not found: {primary} (fallback: {fallback})")
+
+
 def _parse_calendar_datetime(raw: str) -> datetime:
     for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d"):
         try:
@@ -140,7 +150,7 @@ def lol_gnn_build_trainset():
             "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training"),
             "host_training_dir": Variable.get(
                 "lol_gnn_pipeline_training_host_dir",
-                default="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                default="/opt/airflow/dags/git/repo/src/training",
             ),
             "calendar_file": Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json"),
             "train_config": Variable.get("lol_gnn_pipeline_train_config", default="config.json"),
@@ -161,7 +171,7 @@ def lol_gnn_build_trainset():
     @task(task_id="resolve_dataset_window")
     def resolve_dataset_window(cfg_dict: dict):
         now_kst = datetime.now(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
-        calendar_path = Path(cfg_dict["host_training_dir"]) / cfg_dict["calendar_file"]
+        calendar_path = _resolve_calendar_path(cfg_dict["host_training_dir"], cfg_dict["calendar_file"])
         with calendar_path.open("r", encoding="utf-8") as fp:
             calendar_obj = json.load(fp)
         return _resolve_calendar_entry(calendar_obj, now_kst)
@@ -180,7 +190,7 @@ def lol_gnn_build_trainset():
         if not cfg_dict:
             return False
 
-        calendar_path = Path(cfg_dict["host_training_dir"]) / cfg_dict["calendar_file"]
+        calendar_path = _resolve_calendar_path(cfg_dict["host_training_dir"], cfg_dict["calendar_file"])
         with calendar_path.open("r", encoding="utf-8") as fp:
             calendar_obj = json.load(fp)
 
@@ -209,7 +219,7 @@ def lol_gnn_build_trainset():
             Mount(
                 source=Variable.get(
                     "lol_gnn_pipeline_training_host_dir",
-                    default="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                    default="/opt/airflow/dags/git/repo/src/training",
                 ),
                 target="/workspace/src/training",
                 type="bind",
