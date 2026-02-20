@@ -1,10 +1,9 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import pendulum
-from airflow.operators.python import ShortCircuitOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.hooks.base import BaseHook
@@ -71,34 +70,10 @@ def _resolve_calendar_entry(calendar_obj: dict, now_utc: datetime) -> dict:
     }
 
 
-def _is_offset_run_day(calendar_obj: dict, now_kst: datetime) -> bool:
-    target_date = now_kst.date()
-
-    if calendar_obj.get("start_date"):
-        start_dt = _parse_calendar_datetime(str(calendar_obj["start_date"]))
-        run_dates = {start_dt.date() + timedelta(days=1), start_dt.date() + timedelta(days=3)}
-        return target_date in run_dates
-
-    windows = calendar_obj.get("windows", [])
-    if not isinstance(windows, list) or not windows:
-        return False
-
-    for window in windows:
-        if "start_date" not in window:
-            continue
-        start_dt = _parse_calendar_datetime(str(window["start_date"]))
-        start_date = start_dt.date()
-        if target_date == start_date + timedelta(days=1):
-            return True
-        if target_date == start_date + timedelta(days=3):
-            return True
-    return False
-
-
 @dag(
     dag_id="lol_gnn_build_trainset",
     start_date=pendulum.datetime(2025, 1, 1, tz="Asia/Seoul"),
-    schedule="0 5 * * *",  # daily 5:00 KST; gated to start_date+1/+3 only
+    schedule=None,
     catchup=False,
     max_active_runs=1,
     tags=["mlops", "gnn", "dataset"],
@@ -178,32 +153,6 @@ def lol_gnn_build_trainset():
 
     resolved = resolve_dataset_window(cfg)
 
-    def _should_run_on_schedule(**context) -> bool:
-        dag_run = context.get("dag_run")
-        if dag_run and str(getattr(dag_run, "run_type", "")) == "manual":
-            return True
-        if dag_run and str(getattr(dag_run, "run_type", "")) == "backfill":
-            return True
-
-        ti = context["ti"]
-        cfg_dict = ti.xcom_pull(task_ids="runtime_config") or {}
-        if not cfg_dict:
-            return False
-
-        calendar_path = _resolve_calendar_path(cfg_dict["host_training_dir"], cfg_dict["calendar_file"])
-        with calendar_path.open("r", encoding="utf-8") as fp:
-            calendar_obj = json.load(fp)
-
-        now_kst = datetime.now(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
-        should_run = _is_offset_run_day(calendar_obj, now_kst)
-        print(f"scheduled gate check: now_kst={now_kst} should_run={should_run}")
-        return bool(should_run)
-
-    schedule_gate = ShortCircuitOperator(
-        task_id="schedule_offset_gate",
-        python_callable=_should_run_on_schedule,
-    )
-
     build_and_upload_dataset = DockerOperator(
         task_id="build_and_upload_dataset",
         image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
@@ -271,7 +220,7 @@ def lol_gnn_build_trainset():
         reset_dag_run=True,
     )
 
-    cfg >> resolved >> schedule_gate >> build_and_upload_dataset >> trigger_train
+    cfg >> resolved >> build_and_upload_dataset >> trigger_train
 
 
 dag = lol_gnn_build_trainset()
