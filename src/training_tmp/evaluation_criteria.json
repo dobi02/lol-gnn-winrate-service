@@ -1,6 +1,6 @@
 {
   "metrics": {
-    "test_auc": { "min": 0.56 },
+    "test_auc": { "min": 0.99 },
     "test_log_loss": { "max": 0.69 },
     "test_brier_score": { "max": 0.25 }
   },

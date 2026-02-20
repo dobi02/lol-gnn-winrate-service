@@ -10,13 +10,13 @@ from docker.types import Mount
 
 
 @dag(
-    dag_id="test_lol_gnn_train_and_gate",
+    dag_id="lol_gnn_train_and_gate",
     start_date=datetime(2025, 1, 1),
     schedule=None,
     catchup=False,
     max_active_runs=1,
     tags=["mlops", "gnn", "train"],
-    default_args={"retries": 0},
+    default_args={"retries": 1},
     params={
         "dataset_version": Param(
             default="",
@@ -47,7 +47,7 @@ def lol_gnn_train_and_gate():
         return {
             "image": Variable.get("lol_gnn_pipeline_image", default="lol-gnn-pipeline:latest"),
             "network_mode": Variable.get("lol_gnn_pipeline_network", default="bridge"),
-            "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training_tmp"),
+            "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training"),
             "train_config": Variable.get("lol_gnn_pipeline_train_config", default="config.json"),
             "criteria_file": Variable.get("lol_gnn_pipeline_criteria_file", default="evaluation_criteria.json"),
             "minio_bucket": Variable.get("lol_gnn_dataset_bucket", default="mlflow"),
@@ -77,8 +77,8 @@ def lol_gnn_train_and_gate():
         mount_tmp_dir=False,
         mounts=[
             Mount(
-                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training_tmp",
-                target="/workspace/src/training_tmp",
+                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                target="/workspace/src/training",
                 type="bind",
             ),
         ],
@@ -118,6 +118,8 @@ def lol_gnn_train_and_gate():
         image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
         api_version="auto",
         docker_url="unix://var/run/docker.sock",
+        email=["dobi0231@naver.com"],
+        email_on_failure=True,
         network_mode=Variable.get(
             "lol_gnn_pipeline_network",
             default="lol-gnn-winrate-service_lol-network",
@@ -126,8 +128,8 @@ def lol_gnn_train_and_gate():
         mount_tmp_dir=False,
         mounts=[
             Mount(
-                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training_tmp",
-                target="/workspace/src/training_tmp",
+                source="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
+                target="/workspace/src/training",
                 type="bind",
             ),
         ],
