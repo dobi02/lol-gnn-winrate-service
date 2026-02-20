@@ -125,8 +125,9 @@ def lol_gnn_build_trainset():
             "project_dir": Variable.get("lol_gnn_pipeline_project_dir", default="/workspace/src/training"),
             "host_training_dir": Variable.get(
                 "lol_gnn_pipeline_training_host_dir",
-                default="/opt/airflow/dags/git/repo/src/training",
+                default="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
             ),
+            "calendar_dir": Variable.get("lol_gnn_dataset_calendar_dir", default="/opt/airflow/dags/git/repo/src/training"),
             "calendar_file": Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json"),
             "train_config": Variable.get("lol_gnn_pipeline_train_config", default="config.json"),
             "minio_bucket": Variable.get("lol_gnn_dataset_bucket", default="mlflow"),
@@ -146,7 +147,7 @@ def lol_gnn_build_trainset():
     @task(task_id="resolve_dataset_window")
     def resolve_dataset_window(cfg_dict: dict):
         now_kst = datetime.now(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
-        calendar_path = _resolve_calendar_path(cfg_dict["host_training_dir"], cfg_dict["calendar_file"])
+        calendar_path = _resolve_calendar_path(cfg_dict["calendar_dir"], cfg_dict["calendar_file"])
         with calendar_path.open("r", encoding="utf-8") as fp:
             calendar_obj = json.load(fp)
         return _resolve_calendar_entry(calendar_obj, now_kst)
@@ -168,7 +169,7 @@ def lol_gnn_build_trainset():
             Mount(
                 source=Variable.get(
                     "lol_gnn_pipeline_training_host_dir",
-                    default="/opt/airflow/dags/git/repo/src/training",
+                    default="/home/dobi/lol-gnn-winrate-service/airflow/dags/git/repo/src/training",
                 ),
                 target="/workspace/src/training",
                 type="bind",

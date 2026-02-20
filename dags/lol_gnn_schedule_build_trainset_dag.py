@@ -57,12 +57,12 @@ def _is_offset_run_day(calendar_obj: dict, now_kst: datetime) -> bool:
 def lol_gnn_schedule_build_trainset():
     def _should_trigger_today(**_context) -> bool:
         now_kst = datetime.now(tz=pendulum.timezone("Asia/Seoul")).replace(tzinfo=None)
-        host_training_dir = Variable.get(
-            "lol_gnn_pipeline_training_host_dir",
+        calendar_dir = Variable.get(
+            "lol_gnn_dataset_calendar_dir",
             default="/opt/airflow/dags/git/repo/src/training",
         )
         calendar_file = Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json")
-        calendar_path = _resolve_calendar_path(host_training_dir, calendar_file)
+        calendar_path = _resolve_calendar_path(calendar_dir, calendar_file)
         with calendar_path.open("r", encoding="utf-8") as fp:
             calendar_obj = json.load(fp)
 

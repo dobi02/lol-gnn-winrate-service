@@ -327,7 +327,7 @@ def evaluate_and_trigger_retrain_dag():
         now_kst = datetime.now(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
         rolling_start = now_kst - timedelta(days=window_days)
         cal_host_dir = Variable.get(
-            "lol_gnn_pipeline_training_host_dir",
+            "lol_gnn_dataset_calendar_dir",
             default="/opt/airflow/dags/git/repo/src/training",
         )
         cal_file = Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json")
@@ -436,7 +436,7 @@ def evaluate_and_trigger_retrain_dag():
         # Avoid duplicate runs on days already covered by scheduled build-trainset (+1 / +3).
         now_kst = datetime.now(ZoneInfo("Asia/Seoul")).replace(tzinfo=None)
         cal_host_dir = Variable.get(
-            "lol_gnn_pipeline_training_host_dir",
+            "lol_gnn_dataset_calendar_dir",
             default="/opt/airflow/dags/git/repo/src/training",
         )
         cal_file = Variable.get("lol_gnn_dataset_calendar_file", default="dataset_calendar.json")
