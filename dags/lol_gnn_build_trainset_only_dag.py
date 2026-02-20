@@ -191,7 +191,6 @@ def lol_gnn_build_trainset_only():
     schedule_gate = ShortCircuitOperator(
         task_id="schedule_offset_gate",
         python_callable=_should_run_on_schedule,
-        provide_context=True,
     )
 
     build_and_upload_dataset = DockerOperator(

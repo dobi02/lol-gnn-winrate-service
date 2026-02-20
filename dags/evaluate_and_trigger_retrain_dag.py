@@ -452,7 +452,6 @@ def evaluate_and_trigger_retrain_dag():
     gate = ShortCircuitOperator(
         task_id="decide_trigger",
         python_callable=_should_trigger,
-        provide_context=True,
     )
 
     target_dag_id = Variable.get("lol_gnn_retrain_target_dag_id", default="lol_gnn_build_trainset")
