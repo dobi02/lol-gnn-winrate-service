@@ -115,6 +115,7 @@ def lol_gnn_train_and_gate():
 
     evaluate_gate = DockerOperator(
         task_id="evaluate_gate",
+        retries=0,
         image="{{ ti.xcom_pull(task_ids='runtime_config')['image'] }}",
         api_version="auto",
         docker_url="unix://var/run/docker.sock",
