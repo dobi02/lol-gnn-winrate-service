@@ -27,6 +27,7 @@ x-airflow-common:
     AIRFLOW__SMTP__SMTP_USER: resend
     AIRFLOW__SMTP__SMTP_PASSWORD: '${RESEND_API_KEY}'
     AIRFLOW__SMTP__SMTP_MAIL_FROM: '${AIRFLOW_SMTP_MAIL_FROM}'
+    AIRFLOW_CONN_SMTP_DEFAULT: '{"conn_type":"smtp","host":"smtp.resend.com","port":465,"login":"resend","password":"${RESEND_API_KEY}","extra":{"from_email":"${AIRFLOW_SMTP_MAIL_FROM}"}}'
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
