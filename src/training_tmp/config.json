@@ -14,7 +14,7 @@
     "mlflow": {
         "uri": "http://lol-mlflow:5000",
         "experiment_name": "LoL_Win_Prediction_v1",
-        "run_name_prefix": "GNN_SAGE",
+        "run_name_prefix": "fail_test_GNN_SAGE",
         "dataset_name": "matchgraph_25.24_20251204-20260107",
         "tags": {
             "developer": "dongbin",
